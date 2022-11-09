@@ -17,13 +17,7 @@ export class TinyMarbles extends Scene {
             circle: new defs.Regular_2D_Polygon(1, 15),
             // TODO:  Fill in as many additional shape instances as needed in this key/value table.
             //        (Requirement 1)
-            sun: new defs.Subdivision_Sphere(4),
-            planet1: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
-            planet2: new defs.Subdivision_Sphere(3), // Don't use flat_shaded_version
-            planet3: new defs.Subdivision_Sphere(4),
-            planet3_r: new defs.Torus(3, 30),
-            planet4: new defs.Subdivision_Sphere(4),
-            planet4_m: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1),
+            
         };
 
         // *** Materials
@@ -35,22 +29,7 @@ export class TinyMarbles extends Scene {
             ring: new Material(new Ring_Shader()),
             // TODO:  Fill in as many additional material objects as needed in this key/value table.
             //        (Requirement 4)
-            sun: new Material(new defs.Phong_Shader(),
-                {ambient: 1, color: hex_color("#ff0000")}),
-            planet1: new Material(new defs.Phong_Shader(),
-                {ambient: 0, diffusivity: 1, specularity: 0, color: hex_color("#777777")}),
-            planet2_p: new Material(new defs.Phong_Shader(),
-                {ambient: 0, diffusivity: .2, specularity: 1, color: hex_color("#80FFFF")}),
-            planet2_g: new Material(new Gouraud_Shader(),
-                {ambient: 0, diffusivity: .2, specularity: 1, color: hex_color("#80FFFF")}),
-            planet3: new Material(new defs.Phong_Shader(),
-                {ambient: 0, diffusivity: 1, specularity: 1, color: hex_color("#B08040")}),
-            planet3_r: new Material(new Ring_Shader(),
-                {ambient: 1, color: hex_color("#B08040")}),
-            planet4: new Material(new defs.Phong_Shader(),
-                {ambient: 0, smoothness: 1, specularity: 1, color: hex_color("#00AAFF")}),
-            planet4_m: new Material(new defs.Phong_Shader(),
-                {ambient: 0, diffusivity: 1, specularity: 0, color: hex_color("#777777")}),
+            
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
@@ -83,71 +62,7 @@ export class TinyMarbles extends Scene {
 
         // TODO: Create Planets (Requirement 1)
         // this.shapes.[XXX].draw([XXX]) // <--example
-        const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
-
-        // * SUN
-        let sun_transform = Mat4.identity();
-        let sun_r = 2 - Math.cos(Math.PI / 10 * t);
-        sun_transform = sun_transform.times(Mat4.scale(sun_r, sun_r, sun_r));
-        
-        let sun_rgb = Math.abs(Math.sin(Math.PI / 20 * t));
-        let sun_color = color(1, sun_rgb, sun_rgb, 1);
-
-        let sun_light = vec4(0, 0, 0, 1);
-        program_state.lights = [new Light(sun_light, sun_color, 10**sun_r)];
-
-        this.shapes.sun.draw(context, program_state, sun_transform, this.materials.sun.override({color: sun_color}))
-
-        // * PLANETS
-        // Planet 1
-        let planet1_transform = Mat4.identity();
-        let p1_r = 1;
-        planet1_transform = planet1_transform.times(Mat4.scale(p1_r, p1_r, p1_r));
-        planet1_transform = planet1_transform.times(Mat4.translation(5*Math.sin(1.5 * t), 5*Math.cos(1.5 * t), 0));
-        this.shapes.planet1.draw(context, program_state, planet1_transform, this.materials.planet1);
-
-        // Planet 2
-        let planet2_transform = Mat4.identity();
-        let p2_r = 1;
-        planet2_transform = planet2_transform.times(Mat4.scale(p2_r, p2_r, p2_r));
-        planet2_transform = planet2_transform.times(Mat4.translation(8*Math.sin(t), 8*Math.cos(t), 0));
-        if (Math.floor(t) % 2 == 1) {
-            this.shapes.planet2.draw(context, program_state, planet2_transform, this.materials.planet2_g);
-        }
-        else {
-            this.shapes.planet2.draw(context, program_state, planet2_transform, this.materials.planet2_p);
-        }
-
-        // Planet 3
-        let planet3_transform = Mat4.identity();
-        let p3_r = 1;
-        planet3_transform = planet3_transform.times(Mat4.scale(p3_r, p3_r, p3_r));
-        planet3_transform = planet3_transform.times(Mat4.translation(11*Math.sin(t / 3), 11*Math.cos(t / 3), 0));
-
-        this.shapes.planet3.draw(context, program_state, planet3_transform, this.materials.planet3);
-
-        // Planet 3 Ring
-        let planet3_r_transform = Mat4.identity();
-        planet3_r_transform = planet3_r_transform.times(Mat4.translation(11*Math.sin(t / 3), 11*Math.cos(t / 3), 0));
-        planet3_r_transform = planet3_r_transform.times(Mat4.scale(3, 3, 1));
-        this.shapes.planet3_r.draw(context, program_state, planet3_r_transform, this.materials.planet3_r);
-
-        // Planet 4
-        let planet4_transform = Mat4.identity();
-        let p4_r = 1;
-        planet4_transform = planet4_transform.times(Mat4.scale(p4_r, p4_r, p4_r));
-        planet4_transform = planet4_transform.times(Mat4.translation(14*Math.sin(t / 8), 14*Math.cos(t / 8), 0));
-
-        this.shapes.planet4.draw(context, program_state, planet4_transform, this.materials.planet4);        
-
-        // Planet 4 Moon
-        let planet4_m_transform = Mat4.identity();
-        let p4_m_r = 0.3;
-        planet4_m_transform = planet4_m_transform.times(Mat4.translation(14*Math.sin(t / 8), 14*Math.cos(t / 8), 0));
-        planet4_m_transform = planet4_m_transform.times(Mat4.translation(2*Math.sin(t), 2*Math.cos(t), 0));
-        planet4_m_transform = planet4_m_transform.times(Mat4.scale(p4_m_r, p4_m_r, p4_m_r));
-
-        this.shapes.planet4_m.draw(context, program_state, planet4_m_transform, this.materials.planet4_m);     
+          
 
 
         // TODO: Lighting (Requirement 2)
@@ -162,21 +77,6 @@ export class TinyMarbles extends Scene {
 
         this.shapes.torus.draw(context, program_state, model_transform, this.materials.test.override({color: yellow}));
 
-        this.planet_1 = planet1_transform;
-        this.planet_2 = planet2_transform;
-        this.planet_3 = planet3_transform;
-        this.planet_4 = planet4_transform;
-        this.moon = planet4_m_transform;
-
-        let desired = this.initial_camera_location;
-        if (this.attached && this.attached() != null) {
-            desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
-        }
-        else {
-            desired = this.initial_camera_location;
-        }
-        let target = desired.map((x, i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
-        program_state.set_camera(target);
     }
 }
 
