@@ -7,7 +7,7 @@ import {Scene_To_Texture_Demo} from "./examples/scene-to-texture-demo.js"
 import {Surfaces_Demo} from "./examples/surfaces-demo.js"
 import {Text_Demo} from "./examples/text-demo.js"
 import {Transforms_Sandbox} from "./examples/transforms-sandbox.js"
-import {Assignment3} from "./tinymarbles.js";
+import {TinyMarbles} from "./tinymarbles.js";
 
 // Pull these names into this module's scope for convenience:
 const {
