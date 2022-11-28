@@ -8,6 +8,9 @@ export class Body {
     // moves from its previous place due to velocities.  It conforms to the
     // approach outlined in the "Fix Your Timestep!" blog post by Glenn Fiedler.
     constructor(shape, material, size) {
+        // this.shape = shape;
+        // this.material = material;
+        // this.size = size;
         Object.assign(this,
             {shape, material, size})
     }
@@ -20,6 +23,7 @@ export class Body {
     static intersect_sphere(p, margin = 0) {
         return p.dot(p) < 1 + margin;
     }
+
 
     emplace(location_matrix, linear_velocity, angular_velocity, spin_axis = vec3(0, 0, 0).randomized(1).normalized()) {                               // emplace(): assign the body's initial values, or overwrite them.
         this.center = location_matrix.times(vec4(0, 0, 0, 1)).to3();
@@ -92,6 +96,10 @@ export class Simulation extends Scene {
     constructor() {
         super();
         Object.assign(this, {time_accumulator: 0, time_scale: .0016, t: 0, dt: 1 / 20, bodies: [], steps_taken: 0});
+        this.colors = [0, 0, 0, 0];
+        for (let i = 0; i < 4; i++){
+            this.colors[i] = Math.floor(Math.random()*16777215).toString(16);
+        }
     }
 
     simulate(frame_time) {
@@ -123,8 +131,19 @@ export class Simulation extends Scene {
         for (let b of this.bodies) b.blend_state(alpha);
     }
 
+    set_colors(marble) {
+        this.colors[marble] = Math.floor(Math.random()*16777215).toString(16);
+    }
+
     make_control_panel() {
         // make_control_panel(): Create the buttons for interacting with simulation time.
+        
+        // change individual marble colors
+        this.key_triggered_button("Change p1 color", ["Alt", "1"], () => this.set_colors(0));
+        this.key_triggered_button("Change p2 color", ["Alt", "2"], () => this.set_colors(1));
+        this.key_triggered_button("Change p3 color", ["Alt", "3"], () => this.set_colors(2));
+        this.key_triggered_button("Change p4 color", ["Alt", "4"], () => this.set_colors(3));
+
         this.key_triggered_button("Speed up time", ["Shift", "T"], () => this.time_scale *= 5);
         this.key_triggered_button("Slow down time", ["t"], () => this.time_scale /= 5);
         // this.new_line();
@@ -147,8 +166,11 @@ export class Simulation extends Scene {
         if (program_state.animate)
             this.simulate(program_state.animation_delta_time);
         // Draw each shape at its current location:
-        for (let b of this.bodies)
-            b.shape.draw(context, program_state, b.drawn_location, b.material);
+        let i = 0;
+        for (let b of this.bodies){
+            b.shape.draw(context, program_state, b.drawn_location, b.material.override({color:hex_color(this.colors[i])}));
+            i = i + 1;
+        }
     }
 
     update_state(dt)      // update_state(): Your subclass of Simulation has to override this abstract function.
@@ -209,16 +231,9 @@ export class TinyMarbles extends Simulation {
         this.marbles = Array.apply(null, Array(4)).map(function () {});
         this.initial_camera_location = Mat4.translation(0, 0, -50);
         // this.initial_camera_location = this.marbles[0];
-        this.colors = [0, 0, 0, 0];
-        for (let i = 0; i < 4; i++){
-            this.colors[i] = Math.floor(Math.random()*16777215).toString(16);
-        }
+    
     }
 
-    // set_colors(marble) {
-    //     this.colors[marble] = Math.floor(Math.random()*16777215).toString(16);
-    //     this.bodies[marble].material = hex_color(this.colors[marble]);
-    // }
 
     make_control_panel() {
         this.live_string(box => {
@@ -231,11 +246,6 @@ export class TinyMarbles extends Simulation {
         this.key_triggered_button("Attach to player 3", ["Control", "3"], () => this.attached = () => this.marbles[2]);
         this.key_triggered_button("Attach to player 4", ["Control", "4"], () => this.attached = () => this.marbles[3]);
         this.new_line();
-        // changing color buttons
-        // this.key_triggered_button("Change p1 color", ["Alt", "1"], this.set_colors(0));
-        // this.key_triggered_button("Change p2 color", ["Alt", "2"], this.set_colors(1));
-        // this.key_triggered_button("Change p3 color", ["Alt", "3"], this.set_colors(2));
-        // this.key_triggered_button("Change p4 color", ["Alt", "4"], this.set_colors(3));
         super.make_control_panel();
     }
 
