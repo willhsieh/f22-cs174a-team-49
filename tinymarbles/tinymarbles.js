@@ -207,6 +207,10 @@ export class TinyMarbles extends Simulation {
         this.marbles = Array.apply(null, Array(4)).map(function () {});
         this.initial_camera_location = Mat4.translation(0, 0, -50);
         // this.initial_camera_location = this.marbles[0];
+        this.colors = [0, 0, 0, 0];
+        for (let i = 0; i < 4; i++){
+            this.colors[i] = Math.floor(Math.random()*16777215).toString(16);
+        }
     }
 
     make_control_panel() {
@@ -216,12 +220,13 @@ export class TinyMarbles extends Simulation {
         this.key_triggered_button("Attach to player 3", ["Control", "3"], () => this.attached = () => this.marbles[2]);
         this.key_triggered_button("Attach to player 4", ["Control", "4"], () => this.attached = () => this.marbles[3]);
         this.new_line();
+
         super.make_control_panel();
     }
 
 
-    random_color() {
-        return this.material.override(color(1, 1, 1, 1));
+    random_color(length) {
+        return this.material.override(hex_color(this.colors[length]));
     }
 
     update_state(dt) {
@@ -229,7 +234,7 @@ export class TinyMarbles extends Simulation {
         // scene should do to its bodies every frame -- including applying forces.
         // Generate additional moving bodies if there ever aren't enough:
         while (this.bodies.length < 4)
-            this.bodies.push(new Body(this.data.random_shape(), this.random_color(), vec3(1, 1, 1))
+            this.bodies.push(new Body(this.data.random_shape(), this.random_color(this.bodies.length), vec3(1, 1, 1))
                 .emplace(Mat4.translation(...vec3(0, 15, 0).randomized(1)),
                     vec3(0, -1, 0).randomized(2).normalized().times(3), Math.random()));
         for (let i = 0; i < this.bodies.length; i++){
