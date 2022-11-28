@@ -283,9 +283,19 @@ export class TinyMarbles extends Simulation {
             if (b.center[1] < -8 && b.linear_velocity[1] < 0)
                 b.linear_velocity[1] *= -.6;
             
+            
+            // Move out-of-bounds marbles to the start:
+            if (b.center.norm() > 50 || b.linear_velocity.norm() < 0.1) {
+                b.center[0] = 0;
+                b.center[1] = 15;
+                b.center[2] = 0;
+                b.linear_velocity[0] = 0;
+                b.linear_velocity[1] = 0;
+                b.linear_velocity[2] = 0;
+            }
+            
         }
-        // Delete bodies that stop or stray too far away:
-        this.bodies = this.bodies.filter(b => b.center.norm() < 50 && b.linear_velocity.norm() > 0);
+        // this.bodies = this.bodies.filter(b => b.center.norm() < 50 && b.linear_velocity.norm() > 0);
     }
 
     display(context, program_state) {
