@@ -206,6 +206,7 @@ export class TinyMarbles extends Simulation {
         this.shapes.platform1 = new defs.Cube();
         this.marbles = Array.apply(null, Array(4)).map(function () {});
         this.initial_camera_location = Mat4.translation(0, 0, -50);
+        // this.initial_camera_location = this.marbles[0];
     }
 
     make_control_panel() {
@@ -232,7 +233,10 @@ export class TinyMarbles extends Simulation {
                 .emplace(Mat4.translation(...vec3(0, 15, 0).randomized(1)),
                     vec3(0, -1, 0).randomized(2).normalized().times(3), Math.random()));
         for (let i = 0; i < this.bodies.length; i++){
-            this.marbles[i] = this.bodies[i].drawn_location;
+            let center_matrix = Mat4.translation(this.bodies[i].center[0],this.bodies[i].center[1],this.bodies[i].center[2]);
+            console.log(center_matrix);
+            this.marbles[i] = center_matrix;
+
         }
 
         for (let b of this.bodies) {
