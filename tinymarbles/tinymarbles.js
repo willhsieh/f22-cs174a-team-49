@@ -234,7 +234,6 @@ export class TinyMarbles extends Simulation {
                     vec3(0, -1, 0).randomized(2).normalized().times(3), Math.random()));
         for (let i = 0; i < this.bodies.length; i++){
             let center_matrix = Mat4.translation(this.bodies[i].center[0],this.bodies[i].center[1],this.bodies[i].center[2]);
-            console.log(center_matrix);
             this.marbles[i] = center_matrix;
 
         }
