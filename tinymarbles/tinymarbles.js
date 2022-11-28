@@ -140,9 +140,6 @@ export class Simulation extends Scene {
         //     box.textContent = this.steps_taken + " timesteps were taken so far."
         // });
         this.new_line();
-        this.live_string(box => {
-            box.textContent = "Time elapsed: " + Math.trunc(this.t / 2 * 5/4) + " seconds"
-        });
     }
 
     display(context, program_state) {
@@ -208,6 +205,7 @@ export class TinyMarbles extends Simulation {
             ambient: .5, diffusivity: 1, texture: this.data.textures.red
         })
         this.shapes.platform1 = new defs.Cube();
+        // array of matrices representing the camera for each marble attachment
         this.marbles = Array.apply(null, Array(4)).map(function () {});
         this.initial_camera_location = Mat4.translation(0, 0, -50);
         // this.initial_camera_location = this.marbles[0];
@@ -217,20 +215,27 @@ export class TinyMarbles extends Simulation {
         }
     }
 
-    set_colors(marble) {
-        return
-    }
+    // set_colors(marble) {
+    //     this.colors[marble] = Math.floor(Math.random()*16777215).toString(16);
+    //     this.bodies[marble].material = hex_color(this.colors[marble]);
+    // }
+
     make_control_panel() {
+        this.live_string(box => {
+            box.textContent = "Time elapsed: " + Math.trunc(this.t / 2 * 5/4) + " seconds"
+        });
+        // viewing buttons
         this.key_triggered_button("View entire course", ["Control", "0"], () => this.attached = () => null);
         this.key_triggered_button("Attach to player 1", ["Control", "1"], () => this.attached = () => this.marbles[0]);
         this.key_triggered_button("Attach to player 2", ["Control", "2"], () => this.attached = () => this.marbles[1]);
         this.key_triggered_button("Attach to player 3", ["Control", "3"], () => this.attached = () => this.marbles[2]);
         this.key_triggered_button("Attach to player 4", ["Control", "4"], () => this.attached = () => this.marbles[3]);
         this.new_line();
-        this.key_triggered_button("Change p1 color", ["Alt", "1"], () => this.attached = () => this.set_colors(0));
-        this.key_triggered_button("Change p2 color", ["Alt", "2"], () => this.attached = () => this.set_colors(1));
-        this.key_triggered_button("Change p3 color", ["Alt", "3"], () => this.attached = () => this.set_colors(2));
-        this.key_triggered_button("Change p4 color", ["Alt", "4"], () => this.attached = () => this.set_colors(3));
+        // changing color buttons
+        // this.key_triggered_button("Change p1 color", ["Alt", "1"], this.set_colors(0));
+        // this.key_triggered_button("Change p2 color", ["Alt", "2"], this.set_colors(1));
+        // this.key_triggered_button("Change p3 color", ["Alt", "3"], this.set_colors(2));
+        // this.key_triggered_button("Change p4 color", ["Alt", "4"], this.set_colors(3));
         super.make_control_panel();
     }
 
@@ -246,6 +251,8 @@ export class TinyMarbles extends Simulation {
             this.bodies.push(new Body(this.data.random_shape(), this.random_color(this.bodies.length), vec3(1, 1, 1))
                 .emplace(Mat4.translation(...vec3(0, 15, 0).randomized(1)),
                     vec3(0, -1, 0).randomized(2).normalized().times(3), Math.random()));
+        
+        // setting the matrices for the camera if it's attached to a ball
         for (let i = 0; i < this.bodies.length; i++){
             let center_matrix = Mat4.translation(this.bodies[i].center[0],this.bodies[i].center[1],this.bodies[i].center[2]);
             this.marbles[i] = center_matrix;
