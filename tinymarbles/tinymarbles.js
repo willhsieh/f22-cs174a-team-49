@@ -213,6 +213,9 @@ export class TinyMarbles extends Simulation {
         }
     }
 
+    set_colors(marble) {
+        return
+    }
     make_control_panel() {
         this.key_triggered_button("View entire course", ["Control", "0"], () => this.attached = () => null);
         this.key_triggered_button("Attach to player 1", ["Control", "1"], () => this.attached = () => this.marbles[0]);
@@ -220,10 +223,12 @@ export class TinyMarbles extends Simulation {
         this.key_triggered_button("Attach to player 3", ["Control", "3"], () => this.attached = () => this.marbles[2]);
         this.key_triggered_button("Attach to player 4", ["Control", "4"], () => this.attached = () => this.marbles[3]);
         this.new_line();
-
+        this.key_triggered_button("Change p1 color", ["Alt", "1"], () => this.attached = () => this.set_colors(0));
+        this.key_triggered_button("Change p2 color", ["Alt", "2"], () => this.attached = () => this.set_colors(1));
+        this.key_triggered_button("Change p3 color", ["Alt", "3"], () => this.attached = () => this.set_colors(2));
+        this.key_triggered_button("Change p4 color", ["Alt", "4"], () => this.attached = () => this.set_colors(3));
         super.make_control_panel();
     }
-
 
     random_color(length) {
         return this.material.override(hex_color(this.colors[length]));
