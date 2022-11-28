@@ -127,17 +127,21 @@ export class Simulation extends Scene {
         // make_control_panel(): Create the buttons for interacting with simulation time.
         this.key_triggered_button("Speed up time", ["Shift", "T"], () => this.time_scale *= 5);
         this.key_triggered_button("Slow down time", ["t"], () => this.time_scale /= 5);
+        // this.new_line();
+        // this.live_string(box => {
+        //     box.textContent = "Time scale: " + this.time_scale
+        // });
+        // this.new_line();
+        // this.live_string(box => {
+        //     box.textContent = "Fixed simulation time step size: " + this.dt
+        // });
+        // this.new_line();
+        // this.live_string(box => {
+        //     box.textContent = this.steps_taken + " timesteps were taken so far."
+        // });
         this.new_line();
         this.live_string(box => {
-            box.textContent = "Time scale: " + this.time_scale
-        });
-        this.new_line();
-        this.live_string(box => {
-            box.textContent = "Fixed simulation time step size: " + this.dt
-        });
-        this.new_line();
-        this.live_string(box => {
-            box.textContent = this.steps_taken + " timesteps were taken so far."
+            box.textContent = "Time elapsed: " + Math.trunc(this.t / 2 * 5/4) + " seconds"
         });
     }
 
