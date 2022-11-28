@@ -1,7 +1,7 @@
 import {defs, tiny} from './examples/common.js';
 
 // Pull these names into this module's scope for convenience:
-const {vec3, unsafe3, vec4, hex_color, color, Mat4, Light, Shape, Material, Shader, Texture, Scene} = tiny;
+const {Vector, vec3, unsafe3, vec4, hex_color, color, Mat4, Light, Shape, Material, Shader, Texture, Scene} = tiny;
 
 export class Body {
     // **Body** can store and update the properties of a 3D body that incrementally
@@ -204,8 +204,20 @@ export class TinyMarbles extends Simulation {
             ambient: .5, diffusivity: 1, texture: this.data.textures.red
         })
         this.shapes.platform1 = new defs.Cube();
-        
+        this.marbles = Array.apply(null, Array(4)).map(function () {});
+        this.initial_camera_location = Mat4.translation(0, 0, -50);
     }
+
+    make_control_panel() {
+        this.key_triggered_button("View entire course", ["Control", "0"], () => this.attached = () => null);
+        this.key_triggered_button("Attach to player 1", ["Control", "1"], () => this.attached = () => this.marbles[0]);
+        this.key_triggered_button("Attach to player 2", ["Control", "2"], () => this.attached = () => this.marbles[1]);
+        this.key_triggered_button("Attach to player 3", ["Control", "3"], () => this.attached = () => this.marbles[2]);
+        this.key_triggered_button("Attach to player 4", ["Control", "4"], () => this.attached = () => this.marbles[3]);
+        this.new_line();
+        super.make_control_panel();
+    }
+
 
     random_color() {
         return this.material.override(color(1, 1, 1, 1));
@@ -219,6 +231,9 @@ export class TinyMarbles extends Simulation {
             this.bodies.push(new Body(this.data.random_shape(), this.random_color(), vec3(1, 1, 1))
                 .emplace(Mat4.translation(...vec3(0, 15, 0).randomized(1)),
                     vec3(0, -1, 0).randomized(2).normalized().times(3), Math.random()));
+        for (let i = 0; i < this.bodies.length; i++){
+            this.marbles[i] = this.bodies[i].drawn_location;
+        }
 
         for (let b of this.bodies) {
             // Gravity on Earth, where 1 unit in world space = 1 meter:
@@ -268,12 +283,26 @@ export class TinyMarbles extends Simulation {
     display(context, program_state) {
         // display(): Draw everything else in the scene besides the moving bodies.
         super.display(context, program_state);
-
+        let desired = this.initial_camera_location;
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
             this.children.push(new defs.Program_State_Viewer());
             program_state.set_camera(Mat4.translation(0, 0, -50));    // Locate the camera here (inverted matrix).
         }
+        if (this.attached && this.attached() != null) {
+            desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
+        } else {
+            desired = this.initial_camera_location;
+        }
+        let target;
+        if (desired != this.initial_camera_location){
+            target = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
+        }
+        else {
+            target = this.initial_camera_location;
+        }
+        program_state.set_camera(target);
+
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, 1, 500);
         program_state.lights = [new Light(vec4(0, -5, -10, 1), color(1, 1, 1, 1), 100000)];
         // Draw the ground:
@@ -283,6 +312,7 @@ export class TinyMarbles extends Simulation {
         this.shapes.platform1.draw(context, program_state, Mat4.translation(0, 3.5, 0).times(Mat4.rotation(Math.PI / 6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
 
         this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
+        
     }
 
     show_explanation(document_element) {
