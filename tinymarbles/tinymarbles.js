@@ -298,13 +298,7 @@ export class TinyMarbles extends Simulation {
         } else {
             desired = this.initial_camera_location;
         }
-        let target;
-        if (desired != this.initial_camera_location){
-            target = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
-        }
-        else {
-            target = this.initial_camera_location;
-        }
+        let target = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
         program_state.set_camera(target);
 
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, 1, 500);
