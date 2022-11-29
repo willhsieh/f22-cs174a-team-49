@@ -8,9 +8,19 @@ export class Boundary extends defs.Cube{
         super();
         this.location_matrix = translation.times(rotation).times(scale);
         this.normal_vec = this.location_matrix.times(vec4(0,1,0,0));
+
+        //top face for intial cube
+        let face = [vec4(-1, 1, 1, 1), vec4(-1, 1, -1, 1), vec4(1, 1, 1, 1), vec4(1, 1, -1, 1)];
+        
+        for (let i = 0; i < face.length; i++) { 
+            face[i] = this.location_matrix.times(face[i]);
+        }
+
+        this.colliding_face = face;  
     }
 
-    place(translation, rotation, scale) {
+
+    move(translation, rotation, scale) {
         this.location_matrix = translation.times(rotation).times(scale);
     }
 
@@ -105,6 +115,10 @@ export class Body {
         return points.arrays.position.some(p =>
             intersect_test(T.times(p.to4(1)).to3(), leeway));
     }
+
+    //static intersect_cube(p, margin = 0) {
+      //  return p.every(value => value >= -1 - margin && value <= 1 + margin)
+    //}
 }
 
 
@@ -340,6 +354,13 @@ export class TinyMarbles extends Simulation {
                 b.linear_velocity[0] += b.linear_velocity[1] * 1 * Math.sin(Math.PI/6);
             }
 
+            /*
+            0 Vector4 [-8.91025447845459, -1.0669872760772705, 10, 1] (4)
+1 Vector4 [-8.91025447845459, -1.0669872760772705, -10, 1] (4)
+2 Vector4 [8.41025447845459, 8.933012962341309, 10, 1] (4)
+3 Vector4 [8.41025447845459, 8.933012962341309, -10, 1] (4)
+            */
+
             // If about to fall through floor, reverse y velocity:
             if (b.center[1] < -8 && b.linear_velocity[1] < 0)
                 b.linear_velocity[1] *= -.6;
@@ -388,7 +409,7 @@ export class TinyMarbles extends Simulation {
             bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.blue))
         }
         //this.shapes.platform1.draw(context, program_state, Mat4.translation(0, 3.5, 0).times(Mat4.rotation(Math.PI / 6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
-       
+        //this.shapes.ball.draw(context, program_state, Mat4.translation(-9, -1, 10), this.material.override(this.data.textures.blue));
         //this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
         
     }
