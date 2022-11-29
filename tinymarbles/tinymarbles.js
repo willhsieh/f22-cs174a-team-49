@@ -3,6 +3,23 @@ import {defs, tiny} from './examples/common.js';
 // Pull these names into this module's scope for convenience:
 const {Vector, vec3, unsafe3, vec4, hex_color, color, Mat4, Light, Shape, Material, Shader, Texture, Scene} = tiny;
 
+export class Boundary extends defs.Cube{
+    constructor(translation, rotation, scale){
+        super();
+        this.location_matrix = translation.times(rotation).times(scale);
+        this.normal_vec = this.location_matrix.times(vec4(0,1,0,0));
+    }
+
+    place(translation, rotation, scale) {
+        this.location_matrix = translation.times(rotation).times(scale);
+    }
+
+//this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
+
+
+
+}
+
 export class Body {
     // **Body** can store and update the properties of a 3D body that incrementally
     // moves from its previous place due to velocities.  It conforms to the
@@ -22,8 +39,10 @@ export class Body {
 
     static intersect_sphere(p, margin = 0) {
         return p.dot(p) < 1 + margin;
+
     }
 
+   
 
     emplace(location_matrix, linear_velocity, angular_velocity, spin_axis = vec3(0, 0, 0).randomized(1).normalized()) {                               // emplace(): assign the body's initial values, or overwrite them.
         this.center = location_matrix.times(vec4(0, 0, 0, 1)).to3();
@@ -160,7 +179,7 @@ export class Simulation extends Scene {
         // });
         this.new_line();
     }
-
+1
     display(context, program_state) {
         // display(): advance the time and state of our whole simulation.
         if (program_state.animate)
@@ -169,8 +188,12 @@ export class Simulation extends Scene {
         let i = 0;
         for (let b of this.bodies){
             b.shape.draw(context, program_state, b.drawn_location, b.material.override({color:hex_color(this.colors[i])}));
+            //this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
+
             i = i + 1;
         }
+
+
     }
 
     update_state(dt)      // update_state(): Your subclass of Simulation has to override this abstract function.
@@ -226,12 +249,20 @@ export class TinyMarbles extends Simulation {
             color: color(0, 0, 0, 1),
             ambient: .5, diffusivity: 1, texture: this.data.textures.red
         })
-        this.shapes.platform1 = new defs.Cube();
+        //this.shapes.platform1 = new defs.Cube();
         // array of matrices representing the camera for each marble attachment
         this.marbles = Array.apply(null, Array(4)).map(function () {});
+        this.boundaries = new Array();
         this.initial_camera_location = Mat4.translation(0, 0, -50);
         // this.initial_camera_location = this.marbles[0];
-    
+        let platform1 = new Boundary(Mat4.translation(0, 3.5, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(10, .5, 10));
+        this.boundaries.push(platform1);
+        
+        let platform2 = new Boundary(Mat4.translation(-20, -5.5, 0), Mat4.rotation(Math.PI / -6, 0, 0, 1), Mat4.scale(10, .5, 10));
+        this.boundaries.push(platform2);   
+     
+        console.log(this.boundaries);
+
     }
 
 
@@ -253,10 +284,14 @@ export class TinyMarbles extends Simulation {
         return this.material.override(hex_color(this.colors[length]));
     }
 
+
+
     update_state(dt) {
         // update_state():  Override the base time-stepping code to say what this particular
         // scene should do to its bodies every frame -- including applying forces.
         // Generate additional moving bodies if there ever aren't enough:
+        
+        
         while (this.bodies.length < 4)
             this.bodies.push(new Body(this.data.random_shape(), this.random_color(this.bodies.length), vec3(1, 1, 1))
                 .emplace(Mat4.translation(...vec3(0, 15, 0).randomized(1)),
@@ -346,10 +381,15 @@ export class TinyMarbles extends Simulation {
         // Draw the ground:
         this.shapes.square.draw(context, program_state, Mat4.translation(0, -10, 0)
             .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(50, 50, 1)), this.material.override(this.data.textures.green));
-
-        this.shapes.platform1.draw(context, program_state, Mat4.translation(0, 3.5, 0).times(Mat4.rotation(Math.PI / 6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
-
-        this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
+        
+       
+        
+        for (let bound of this.boundaries) {
+            bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.blue))
+        }
+        //this.shapes.platform1.draw(context, program_state, Mat4.translation(0, 3.5, 0).times(Mat4.rotation(Math.PI / 6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
+       
+        //this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
         
     }
 
