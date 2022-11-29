@@ -16,7 +16,7 @@ export class Boundary extends defs.Cube{
             face[i] = this.location_matrix.times(face[i]);
         }
 
-        this.colliding_face = face;  
+        this.colliding_face = face;
     }
 
 
@@ -25,9 +25,6 @@ export class Boundary extends defs.Cube{
     }
 
 //this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
-
-
-
 }
 
 export class Body {
@@ -229,6 +226,8 @@ export class Test_Data {
             red: new Texture("assets/red.png"),
             green: new Texture("assets/green.png"),
             blue: new Texture("assets/blue.png"),
+            marble: new Texture("assets/marble.png"),
+            marble2: new Texture("assets/marble2.jpg"),
         }
         this.shapes = {
             // donut: new defs.Torus(15, 15, [[0, 2], [0, 1]]),
@@ -261,7 +260,7 @@ export class TinyMarbles extends Simulation {
         const shader = new defs.Fake_Bump_Map(1);
         this.material = new Material(shader, {
             color: color(0, 0, 0, 1),
-            ambient: .5, diffusivity: 1, texture: this.data.textures.red
+            ambient: .5, diffusivity: 1, texture: this.data.textures.marble2
         })
         //this.shapes.platform1 = new defs.Cube();
         // array of matrices representing the camera for each marble attachment
@@ -273,16 +272,17 @@ export class TinyMarbles extends Simulation {
         this.boundaries.push(platform1);
         
         let platform2 = new Boundary(Mat4.translation(-20, -5.5, 0), Mat4.rotation(Math.PI / -6, 0, 0, 1), Mat4.scale(10, .5, 10));
-        this.boundaries.push(platform2);   
+        this.boundaries.push(platform2);
+
+        // TODO: more platforms here        
      
         console.log(this.boundaries);
-
     }
 
 
     make_control_panel() {
         this.live_string(box => {
-            box.textContent = "Time elapsed: " + Math.trunc(this.t / 2 * 5/4) + " seconds"
+            box.textContent = "Time elapsed: " + (Math.trunc(this.t * 100 / 2 * 5/4) / 100).toFixed(2) + " seconds"
         });
         // viewing buttons
         this.key_triggered_button("View entire course", ["Control", "0"], () => this.attached = () => null);
@@ -326,7 +326,16 @@ export class TinyMarbles extends Simulation {
             // if (Math.abs(b.center[0]) < 10 && Math.abs(b.center[2]) < 10 && b.center[1] < 0) {
             //     b.linear_velocity[1] *= -.8;
             // }
+
+            // if (colliding(b)) {
+            //     surface = colliding(b);
+            //     b.linear_velocity[0] *= surface[0] * 0.8;
+            //     b.linear_velocity[1] *= surface[1] * 0.8;
+            //     b.linear_velocity[2] *= surface[2] * 0.8;
+            // }
             
+            /* -------- Collisions -------- */
+            // Platform 1
             if (Math.abs(b.center[0]) < 10 && Math.abs(b.center[2]) < 10 &&
                     b.center[1] < 5 + (b.center[0] * Math.sin(Math.PI/6)) &&
                     b.center[1] > 4 + (b.center[0] * Math.sin(Math.PI/6))) {
@@ -334,6 +343,7 @@ export class TinyMarbles extends Simulation {
                 b.linear_velocity[1] *= -.6 * Math.cos(Math.PI/6);
                 b.linear_velocity[0] += b.linear_velocity[1] * -1 * Math.sin(Math.PI/6);
             }
+            // Platform 2
             if (b.center[0] < 10 && b.center[0] > -30 && Math.abs(b.center[2]) < 10 &&
                     b.center[1] < -4 + ((b.center[0] + 20) * Math.sin(-1 * Math.PI/6))) {
             
