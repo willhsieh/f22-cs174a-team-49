@@ -402,7 +402,7 @@ export class TinyMarbles extends Simulation {
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
             this.children.push(new defs.Program_State_Viewer());
-            program_state.set_camera(Mat4.translation(0, 0, -50));    // Locate the camera here (inverted matrix).
+            program_state.set_camera(this.initial_camera_location);    // Locate the camera here (inverted matrix).
         }
         if (this.attached && this.attached() != null) {
             desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
