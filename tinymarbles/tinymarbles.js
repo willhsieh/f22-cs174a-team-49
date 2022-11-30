@@ -307,6 +307,8 @@ export class Test_Data {
             blue: new Texture("assets/blue.png"),
             marble: new Texture("assets/marble.png"),
             marble2: new Texture("assets/marble2.jpg"),
+            kirby: new Texture("assets/kirby.png"),
+            kirby2: new Texture("assets/kirby2.png"),
             ground: new Texture("assets/ground.jpg", "LINEAR_MIPMAP_LINEAR"),
             platform: new Texture("assets/platform.png"),
             background: new Texture("assets/background.png"),
@@ -344,7 +346,7 @@ export class TinyMarbles extends Simulation {
         this.material = new Material(shader, {
             color: color(0, 0, 0, 1),
             ambient: .5, diffusivity: 1, specularity: 0.7, 
-            texture: this.data.textures.marble2
+            texture: this.data.textures.kirby
         })
         //this.shapes.platform1 = new defs.Cube();
         // array of matrices representing the camera for each marble attachment
