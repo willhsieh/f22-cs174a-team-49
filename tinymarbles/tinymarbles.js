@@ -49,7 +49,7 @@ export class Boundary extends defs.Cube{
         let plane = (this.a*point[0]+this.b*point[1]+this.c*point[2])-this.d;
         //console.log(plane);
         
-        if(plane >= -1 && plane <= 1){
+        if(plane >= -0.75 && plane <= 0.75){ // 0.75 is emprirically tested
             plane = true;
             //console.log("plane satisfied");
         }
@@ -57,7 +57,7 @@ export class Boundary extends defs.Cube{
             plane = false;
         }
 
-         point = [point[0], point[2]];
+        point = [point[0], point[2]];
 
         if (plane && (this.inside_triangle(triangle1, point) || this.inside_triangle(triangle2, point))) {
             return true;
@@ -352,15 +352,20 @@ export class TinyMarbles extends Simulation {
         // array of matrices representing the camera for each marble attachment
         this.marbles = Array.apply(null, Array(4)).map(function () {});
         this.boundaries = new Array();
-        this.initial_camera_location = Mat4.translation(0, 0, -50);
+        this.initial_camera_location = Mat4.translation(0, -20, -100);
         // this.initial_camera_location = this.marbles[0];
-        let platform1 = new Boundary(Mat4.translation(0, 3.5, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(10, .5, 10));
+        let platform1 = new Boundary(Mat4.translation(0, 40, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(10, .5, 10));
         this.boundaries.push(platform1);
         
-        let platform2 = new Boundary(Mat4.translation(-20, -5.5, 0), Mat4.rotation(Math.PI / -6, 0, 0, 1), Mat4.scale(10, .5, 10));
+        let platform2 = new Boundary(Mat4.translation(-20, 30, 0), Mat4.rotation(Math.PI / -6, 0, 0, 1), Mat4.scale(10, .5, 10));
         this.boundaries.push(platform2);
 
-        // TODO: more platforms here        
+        // TODO: more platforms here
+        let platform3 = new Boundary(Mat4.translation(-5, 18, 0), Mat4.rotation(0, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(platform3);
+
+        let platform4 = new Boundary(Mat4.translation(5, 23, 0), Mat4.rotation(Math.PI / 4, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(platform4);
 
         console.log(this.boundaries);
     }
@@ -393,8 +398,8 @@ export class TinyMarbles extends Simulation {
         
         while (this.bodies.length < 4)
             this.bodies.push(new Body(this.data.random_shape(), this.random_color(this.bodies.length), vec3(1, 1, 1))
-                .emplace(Mat4.translation(...vec3(0, 15, 0).randomized(1)),
-                    vec3(0, -1, 0).randomized(2).normalized().times(3), Math.random()));
+                .emplace(Mat4.translation(...vec3(0, 50, 0).randomized(1)),
+                    vec3(0, -1, 0).randomized(0).normalized().times(3), Math.random()));
         
         // setting the matrices for the camera if it's attached to a ball
         for (let i = 0; i < this.bodies.length; i++){
@@ -403,57 +408,42 @@ export class TinyMarbles extends Simulation {
 
         }
 
-        //COLLISION TEST LOG
-        if (this.boundaries[0].check_collision(this.bodies[0].center)){
-            console.log("colliding!");
+        // COLLISIONS AND PHYSICS UPDATES
+        for (let b of this.bodies) {
+            // BOUNDARY 1
+            if (this.boundaries[0].check_collision(b.center)){
+                console.log("Boundary 0");
+                b.linear_velocity[1] *= -.6 * Math.cos(Math.PI/6);
+                b.linear_velocity[0] += b.linear_velocity[1] * -1 * Math.sin(Math.PI/6);
+            }
+            // BOUNDARY 2
+            if (this.boundaries[1].check_collision(b.center)){
+                console.log("Boundary 1");
+                if (b.linear_velocity[0] < 0) {
+                    b.linear_velocity[0] = 0;
+                }
+                b.linear_velocity[1] *= -.6 * Math.cos(Math.PI/6);
+                b.linear_velocity[0] += b.linear_velocity[1] * 1 * Math.sin(Math.PI/6);
+            }
+            // BOUNDARY 3
+            if (this.boundaries[2].check_collision(b.center)){
+                console.log("Boundary 3");
+                b.linear_velocity[1] *= -0.9;
+            }
+            // BOUNDARY 4
+            if (this.boundaries[3].check_collision(b.center)){
+                console.log("Boundary 4");
+                if (b.linear_velocity[0] > 0) {
+                    b.linear_velocity[0] = 0;
+                }
+                b.linear_velocity[1] *= -.8 * Math.cos(Math.PI/4);
+                b.linear_velocity[0] += b.linear_velocity[1] * -1 * Math.sin(Math.PI/4);
+            }
         }
-        
 
         for (let b of this.bodies) {
             // Gravity on Earth, where 1 unit in world space = 1 meter:
             b.linear_velocity[1] += dt * -9.8;
-
-            // b.center has [x, y, z]
-            // if (Math.abs(b.center[0]) < 10 && Math.abs(b.center[2]) < 10 && b.center[1] < 0) {
-            //     b.linear_velocity[1] *= -.8;
-            // }
-
-            // if (colliding(b)) {
-            //     surface = colliding(b);
-            //     b.linear_velocity[0] *= surface[0] * 0.8;
-            //     b.linear_velocity[1] *= surface[1] * 0.8;
-            //     b.linear_velocity[2] *= surface[2] * 0.8;
-            // }
-            
-            /* -------- Collisions -------- */
-            // Platform 1
-            if (Math.abs(b.center[0]) < 10 && Math.abs(b.center[2]) < 10 &&
-                    b.center[1] < 5 + (b.center[0] * Math.sin(Math.PI/6)) &&
-                    b.center[1] > 4 + (b.center[0] * Math.sin(Math.PI/6))) {
-                        
-                b.linear_velocity[1] *= -.6 * Math.cos(Math.PI/6);
-                b.linear_velocity[0] += b.linear_velocity[1] * -1 * Math.sin(Math.PI/6);
-            }
-            // Platform 2
-            if (b.center[0] < 10 && b.center[0] > -30 && Math.abs(b.center[2]) < 10 &&
-                    b.center[1] < -4 + ((b.center[0] + 20) * Math.sin(-1 * Math.PI/6))) {
-            
-                // b.center[1] = -3 + ((b.center[0] + 20) * Math.sin(-1 * Math.PI/6));
-                if (b.linear_velocity[0] < 0) {
-                    b.linear_velocity[1] *= -.6 * Math.cos(Math.PI/6);
-                    b.linear_velocity[0] = 0;
-                }
-                else {
-                    b.linear_velocity[1] *= -.6 * Math.cos(Math.PI/6);
-                }
-                // if (b.linear_velocity[0] < 0) {
-                //     b.linear_velocity[0] += b.linear_velocity[1] * 2 * Math.sin(Math.PI/6);
-                // }
-                // else {
-                //     b.linear_velocity[0] += b.linear_velocity[1] * 1 * Math.sin(Math.PI/6);
-                // }
-                b.linear_velocity[0] += b.linear_velocity[1] * 1 * Math.sin(Math.PI/6);
-            }
 
             /*
             0 Vector4 [-8.91025447845459, -1.0669872760772705, 10, 1] (4)
@@ -468,9 +458,9 @@ export class TinyMarbles extends Simulation {
             
             
             // Move out-of-bounds marbles to the start:
-            if (b.center.norm() > 50 || b.linear_velocity.norm() < 0.1) {
+            if (b.center.norm() > 70 || b.linear_velocity.norm() < 0.1) {
                 b.center[0] = 0;
-                b.center[1] = 15;
+                b.center[1] = 50;
                 b.center[2] = 0;
                 b.linear_velocity[0] = 0;
                 b.linear_velocity[1] = 0;
