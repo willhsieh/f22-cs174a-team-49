@@ -3,6 +3,15 @@ import {defs, tiny} from './examples/common.js';
 // Pull these names into this module's scope for convenience:
 const {Vector, vec3, unsafe3, vec4, hex_color, color, Mat4, Light, Shape, Material, Shader, Texture, Scene} = tiny;
 
+//audio
+var audio = new Audio('assets/audio.mp3');
+audio.volume = 0.08;
+audio.play();
+
+function toggle_music(){
+    return audio.paused ? audio.play() : audio.pause();
+};
+
 export class Boundary extends defs.Cube{
     constructor(translation, rotation, scale){
         super();
@@ -94,9 +103,6 @@ export class Boundary extends defs.Cube{
     }
 
 //this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
-
-
-
 }
 
 export class Body {
@@ -200,7 +206,7 @@ export class Simulation extends Scene {
         Object.assign(this, {time_accumulator: 0, time_scale: .0016, t: 0, dt: 1 / 20, bodies: [], steps_taken: 0});
         this.colors = [0, 0, 0, 0];
         for (let i = 0; i < 4; i++){
-            this.colors[i] = Math.floor(Math.random()*16777215).toString(16);
+            this.colors[i] = Math.floor(Math.random()*(16777215- 3883845) + 3883845).toString(16);
         }
     }
 
@@ -234,7 +240,7 @@ export class Simulation extends Scene {
     }
 
     set_colors(marble) {
-        this.colors[marble] = Math.floor(Math.random()*16777215).toString(16);
+        this.colors[marble] = Math.floor(Math.random()*(16777215- 3883845) + 3883845).toString(16);
     }
 
     make_control_panel() {
@@ -248,6 +254,7 @@ export class Simulation extends Scene {
 
         this.key_triggered_button("Speed up time", ["Shift", "T"], () => this.time_scale *= 5);
         this.key_triggered_button("Slow down time", ["t"], () => this.time_scale /= 5);
+        this.key_triggered_button("Pause/Play music", ["p"], () => toggle_music());
         // this.new_line();
         // this.live_string(box => {
         //     box.textContent = "Time scale: " + this.time_scale
@@ -298,12 +305,18 @@ export class Test_Data {
             red: new Texture("assets/red.png"),
             green: new Texture("assets/green.png"),
             blue: new Texture("assets/blue.png"),
+            marble: new Texture("assets/marble.png"),
+            marble2: new Texture("assets/marble2.jpg"),
+            ground: new Texture("assets/ground.jpg", "LINEAR_MIPMAP_LINEAR"),
+            platform: new Texture("assets/platform.png"),
+            background: new Texture("assets/background.png"),
+
         }
         this.shapes = {
             // donut: new defs.Torus(15, 15, [[0, 2], [0, 1]]),
             // cone: new defs.Closed_Cone(4, 10, [[0, 2], [0, 1]]),
             // capped: new defs.Capped_Cylinder(4, 12, [[0, 2], [0, 1]]),
-            ball: new defs.Subdivision_Sphere(3),
+            ball: new defs.Subdivision_Sphere(5),
             // cube: new defs.Cube(),
             // prism: new (defs.Capped_Cylinder.prototype.make_flat_shaded_version())(10, 10, [[0, 2], [0, 1]]),
             // gem: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
@@ -330,7 +343,8 @@ export class TinyMarbles extends Simulation {
         const shader = new defs.Fake_Bump_Map(1);
         this.material = new Material(shader, {
             color: color(0, 0, 0, 1),
-            ambient: .5, diffusivity: 1, texture: this.data.textures.red
+            ambient: .5, diffusivity: 1, specularity: 0.7, 
+            texture: this.data.textures.marble2
         })
         //this.shapes.platform1 = new defs.Cube();
         // array of matrices representing the camera for each marble attachment
@@ -342,16 +356,17 @@ export class TinyMarbles extends Simulation {
         this.boundaries.push(platform1);
         
         let platform2 = new Boundary(Mat4.translation(-20, -5.5, 0), Mat4.rotation(Math.PI / -6, 0, 0, 1), Mat4.scale(10, .5, 10));
-        this.boundaries.push(platform2);   
-     
-        console.log(this.boundaries);
+        this.boundaries.push(platform2);
 
+        // TODO: more platforms here        
+
+        console.log(this.boundaries);
     }
 
 
     make_control_panel() {
         this.live_string(box => {
-            box.textContent = "Time elapsed: " + Math.trunc(this.t / 2 * 5/4) + " seconds"
+            box.textContent = "Time elapsed: " + (Math.trunc(this.t * 100 / 2 * 5/4) / 100).toFixed(2) + " seconds"
         });
         // viewing buttons
         this.key_triggered_button("View entire course", ["Control", "0"], () => this.attached = () => null);
@@ -400,8 +415,16 @@ export class TinyMarbles extends Simulation {
             // if (Math.abs(b.center[0]) < 10 && Math.abs(b.center[2]) < 10 && b.center[1] < 0) {
             //     b.linear_velocity[1] *= -.8;
             // }
-            
 
+            // if (colliding(b)) {
+            //     surface = colliding(b);
+            //     b.linear_velocity[0] *= surface[0] * 0.8;
+            //     b.linear_velocity[1] *= surface[1] * 0.8;
+            //     b.linear_velocity[2] *= surface[2] * 0.8;
+            // }
+            
+            /* -------- Collisions -------- */
+            // Platform 1
             if (Math.abs(b.center[0]) < 10 && Math.abs(b.center[2]) < 10 &&
                     b.center[1] < 5 + (b.center[0] * Math.sin(Math.PI/6)) &&
                     b.center[1] > 4 + (b.center[0] * Math.sin(Math.PI/6))) {
@@ -409,6 +432,7 @@ export class TinyMarbles extends Simulation {
                 b.linear_velocity[1] *= -.6 * Math.cos(Math.PI/6);
                 b.linear_velocity[0] += b.linear_velocity[1] * -1 * Math.sin(Math.PI/6);
             }
+            // Platform 2
             if (b.center[0] < 10 && b.center[0] > -30 && Math.abs(b.center[2]) < 10 &&
                     b.center[1] < -4 + ((b.center[0] + 20) * Math.sin(-1 * Math.PI/6))) {
             
@@ -462,7 +486,7 @@ export class TinyMarbles extends Simulation {
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
             this.children.push(new defs.Program_State_Viewer());
-            program_state.set_camera(Mat4.translation(0, 0, -50));    // Locate the camera here (inverted matrix).
+            program_state.set_camera(this.initial_camera_location);    // Locate the camera here (inverted matrix).
         }
         if (this.attached && this.attached() != null) {
             desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
@@ -476,14 +500,15 @@ export class TinyMarbles extends Simulation {
         program_state.lights = [new Light(vec4(0, -5, -10, 1), color(1, 1, 1, 1), 100000)];
         // Draw the ground:
         this.shapes.square.draw(context, program_state, Mat4.translation(0, -10, 0)
-            .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(50, 50, 1)), this.material.override(this.data.textures.green));
+            .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(50, 50, 1)), this.material.override(this.data.textures.ground));
         
-       
+        this.shapes.square.draw(context, program_state, Mat4.translation(0, -30, -40)
+            .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(90, 90, 1)), this.material.override({ambient:0.9, specularity:0, texture:this.data.textures.background}));
         
         
 
         for (let bound of this.boundaries) {
-            bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.blue));
+            bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.platform));
         }
         //this.shapes.platform1.draw(context, program_state, Mat4.translation(0, 3.5, 0).times(Mat4.rotation(Math.PI / 6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
         //this.shapes.ball.draw(context, program_state, Mat4.translation(-9, -1, 10), this.material.override(this.data.textures.blue));
