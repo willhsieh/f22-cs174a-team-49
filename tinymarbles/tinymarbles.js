@@ -352,20 +352,80 @@ export class TinyMarbles extends Simulation {
         // array of matrices representing the camera for each marble attachment
         this.marbles = Array.apply(null, Array(4)).map(function () {});
         this.boundaries = new Array();
-        this.initial_camera_location = Mat4.translation(0, -20, -100);
+        this.initial_camera_location = Mat4.translation(0, -50, -200);
         // this.initial_camera_location = this.marbles[0];
-        let platform1 = new Boundary(Mat4.translation(0, 40, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(10, .5, 10));
-        this.boundaries.push(platform1);
+        // let platform1 = new Boundary(Mat4.translation(0, 40, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(10, .5, 10));
+        // this.boundaries.push(platform1);
+        // let platform2 = new Boundary(Mat4.translation(-20, 30, 0), Mat4.rotation(Math.PI / -6, 0, 0, 1), Mat4.scale(10, .5, 10));
+        // this.boundaries.push(platform2);
+        // let platform3 = new Boundary(Mat4.translation(-5, 18, 0), Mat4.rotation(0, 0, 0, 1), Mat4.scale(5, .5, 10));
+        // this.boundaries.push(platform3);
+        // let platform4 = new Boundary(Mat4.translation(5, 23, 0), Mat4.rotation(Math.PI / 4, 0, 0, 1), Mat4.scale(5, .5, 10));
+        // this.boundaries.push(platform4);
+
+        // Platforms
+        let p0 = new Boundary(Mat4.translation(15, 100, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(10, .5, 10));
+        this.boundaries.push(p0);
+
+        let p1 = new Boundary(Mat4.translation(-15, 90, 0), Mat4.rotation(0, 0, 0, 1), Mat4.scale(10, .5, 10));
+        this.boundaries.push(p1);
+
+        let p2 = new Boundary(Mat4.translation(-25, 95, 0), Mat4.rotation(Math.PI / 2, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(p2);
+
+        let p3 = new Boundary(Mat4.translation(-2, 87, 0), Mat4.rotation(-Math.PI / 6, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(p3);
+
+        let p6 = new Boundary(Mat4.translation(-25, 75, 0), Mat4.rotation(-Math.PI / 3, 0, 0, 1), Mat4.scale(10, .5, 10));
+        this.boundaries.push(p6);
+
+        let p7 = new Boundary(Mat4.translation(-15, 65, 0), Mat4.rotation(-Math.PI / 6, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(p7);
+
+        let p8 = new Boundary(Mat4.translation(25, 75, 0), Mat4.rotation(Math.PI / 3, 0, 0, 1), Mat4.scale(10, .5, 10));
+        this.boundaries.push(p8);
+
+        let p9 = new Boundary(Mat4.translation(15, 65, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(p9);
+
+        let p10 = new Boundary(Mat4.translation(-17, 50, 0), Mat4.rotation(-Math.PI / 4, 0, 0, 1), Mat4.scale(10, .5, 10));
+        this.boundaries.push(p10);
+
+        let p11 = new Boundary(Mat4.translation(-4, 55, 0), Mat4.rotation(Math.PI / 4, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(p11);
         
-        let platform2 = new Boundary(Mat4.translation(-20, 30, 0), Mat4.rotation(Math.PI / -6, 0, 0, 1), Mat4.scale(10, .5, 10));
-        this.boundaries.push(platform2);
+        let p12 = new Boundary(Mat4.translation(4, 55, 0), Mat4.rotation(-Math.PI / 4, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(p12);
 
-        // TODO: more platforms here
-        let platform3 = new Boundary(Mat4.translation(-5, 18, 0), Mat4.rotation(0, 0, 0, 1), Mat4.scale(5, .5, 10));
-        this.boundaries.push(platform3);
+        let p13 = new Boundary(Mat4.translation(18, 45, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(10, .5, 10));
+        this.boundaries.push(p13);
 
-        let platform4 = new Boundary(Mat4.translation(5, 23, 0), Mat4.rotation(Math.PI / 4, 0, 0, 1), Mat4.scale(5, .5, 10));
-        this.boundaries.push(platform4);
+        let p14 = new Boundary(Mat4.translation(-15, 35, 0), Mat4.rotation(-Math.PI / 6, 0, 0, 1), Mat4.scale(7, .5, 10));
+        this.boundaries.push(p14);
+
+        let p17 = new Boundary(Mat4.translation(15, 25, 0), Mat4.rotation(-Math.PI / 4, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(p17);
+
+        let p18 = new Boundary(Mat4.translation(25, 28, 0), Mat4.rotation(Math.PI / 4, 0, 0, 1), Mat4.scale(10, .5, 10));
+        this.boundaries.push(p18);
+
+        let p19 = new Boundary(Mat4.translation(-5, 25, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(p19);
+
+        let p20 = new Boundary(Mat4.translation(2, 23, 0), Mat4.rotation(-Math.PI / 3, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(p20);
+
+        let p21 = new Boundary(Mat4.translation(-18, 20, 0), Mat4.rotation(-Math.PI / 6, 0, 0, 1), Mat4.scale(8, .5, 10));
+        this.boundaries.push(p21);
+
+        let p22 = new Boundary(Mat4.translation(8, 15, 0), Mat4.rotation(-Math.PI / 6, 0, 0, 1), Mat4.scale(5, .5, 10));
+        this.boundaries.push(p22);
+
+        let p23 = new Boundary(Mat4.translation(20, 5, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(15, .5, 10));
+        this.boundaries.push(p23);
+
+        let p26 = new Boundary(Mat4.translation(-20, 5, 0), Mat4.rotation(-Math.PI / 6, 0, 0, 1), Mat4.scale(15, .5, 10));
+        this.boundaries.push(p26);
 
         console.log(this.boundaries);
     }
@@ -389,7 +449,25 @@ export class TinyMarbles extends Simulation {
         return this.material.override(hex_color(this.colors[length]));
     }
 
-
+    update_velocity(b, restitution=0.8, normal) {
+        if (normal[0] < 0) {
+            if (b.linear_velocity[0] > 0) {
+                b.linear_velocity[0] = 0;
+            }
+            b.linear_velocity[1] *= normal[1] * 2 * -restitution;
+            b.linear_velocity[0] += b.linear_velocity[1] * normal[0] * 2;
+        }
+        else if (normal[0] > 0) {
+            if (b.linear_velocity[0] < 0) {
+                b.linear_velocity[0] = 0;
+            }
+            b.linear_velocity[1] *= normal[1] * 2 * -restitution;
+            b.linear_velocity[0] += b.linear_velocity[1] * normal[0] * 2;
+        }
+        else {
+            b.linear_velocity[1] *= -restitution;
+        }
+    }
 
     update_state(dt) {
         // update_state():  Override the base time-stepping code to say what this particular
@@ -398,8 +476,8 @@ export class TinyMarbles extends Simulation {
         
         while (this.bodies.length < 4)
             this.bodies.push(new Body(this.data.random_shape(), this.random_color(this.bodies.length), vec3(1, 1, 1))
-                .emplace(Mat4.translation(...vec3(0, 50, 0).randomized(1)),
-                    vec3(0, -1, 0).randomized(0).normalized().times(3), Math.random()));
+                .emplace(Mat4.translation(...vec3(15, 120, 0).randomized(1)),
+                    vec3(-0.5, 0, 0).randomized(0).normalized().times(3), Math.random()));
         
         // setting the matrices for the camera if it's attached to a ball
         for (let i = 0; i < this.bodies.length; i++){
@@ -410,34 +488,13 @@ export class TinyMarbles extends Simulation {
 
         // COLLISIONS AND PHYSICS UPDATES
         for (let b of this.bodies) {
-            // BOUNDARY 1
-            if (this.boundaries[0].check_collision(b.center)){
-                console.log("Boundary 0");
-                b.linear_velocity[1] *= -.6 * Math.cos(Math.PI/6);
-                b.linear_velocity[0] += b.linear_velocity[1] * -1 * Math.sin(Math.PI/6);
-            }
-            // BOUNDARY 2
-            if (this.boundaries[1].check_collision(b.center)){
-                console.log("Boundary 1");
-                if (b.linear_velocity[0] < 0) {
-                    b.linear_velocity[0] = 0;
+            let idx = 0;
+            for (let p of this.boundaries) {
+                if (p.check_collision(b.center)) {
+                    // console.log(idx);
+                    this.update_velocity(b, 0.8, p.normal_vec);
                 }
-                b.linear_velocity[1] *= -.6 * Math.cos(Math.PI/6);
-                b.linear_velocity[0] += b.linear_velocity[1] * 1 * Math.sin(Math.PI/6);
-            }
-            // BOUNDARY 3
-            if (this.boundaries[2].check_collision(b.center)){
-                console.log("Boundary 3");
-                b.linear_velocity[1] *= -0.9;
-            }
-            // BOUNDARY 4
-            if (this.boundaries[3].check_collision(b.center)){
-                console.log("Boundary 4");
-                if (b.linear_velocity[0] > 0) {
-                    b.linear_velocity[0] = 0;
-                }
-                b.linear_velocity[1] *= -.8 * Math.cos(Math.PI/4);
-                b.linear_velocity[0] += b.linear_velocity[1] * -1 * Math.sin(Math.PI/4);
+                idx += 1;
             }
         }
 
@@ -456,15 +513,25 @@ export class TinyMarbles extends Simulation {
             if (b.center[1] < -8 && b.linear_velocity[1] < 0)
                 b.linear_velocity[1] *= -.6;
             
+            // Left-right borders:
+            if (Math.abs(b.center[0]) > 24) {
+                b.linear_velocity[0] *= -1;
+            }
+
+            // Front-back borders:
+            if (Math.abs(b.center[2]) > 10) {
+                b.linear_velocity[2] *= -1;
+            }
+            
             
             // Move out-of-bounds marbles to the start:
-            if (b.center.norm() > 70 || b.linear_velocity.norm() < 0.1) {
-                b.center[0] = 0;
-                b.center[1] = 50;
+            if (b.center.norm() > 150 || b.linear_velocity.norm() < 0.3) {
+                b.center[0] = 15;
+                b.center[1] = 120;
                 b.center[2] = 0;
-                b.linear_velocity[0] = 0;
+                b.linear_velocity[0] = Math.random() - 0.5;
                 b.linear_velocity[1] = 0;
-                b.linear_velocity[2] = 0;
+                b.linear_velocity[2] = Math.random() * 2 - 1;
             }
             
         }
@@ -494,7 +561,7 @@ export class TinyMarbles extends Simulation {
         this.shapes.square.draw(context, program_state, Mat4.translation(0, -10, 0)
             .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(50, 50, 1)), this.material.override(this.data.textures.ground));
         
-        this.shapes.square.draw(context, program_state, Mat4.translation(0, -30, -40)
+        this.shapes.square.draw(context, program_state, Mat4.translation(0, 57, -20)
             .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(90, 90, 1)), this.material.override({ambient:0.9, specularity:0, texture:this.data.textures.background}));
         
         
