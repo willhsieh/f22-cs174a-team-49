@@ -9,7 +9,7 @@ export class Boundary extends defs.Cube{
         this.location_matrix = translation.times(rotation).times(scale);
         this.normal_vec = this.location_matrix.times(vec4(0,1,0,0));
 
-        //top face for intial cube
+        //top face for initial cube
         let face = [vec4(-1, 1, 1, 1), vec4(-1, 1, -1, 1), vec4(1, 1, 1, 1), vec4(1, 1, -1, 1)];
         
         for (let i = 0; i < face.length; i++) { 
@@ -17,9 +17,78 @@ export class Boundary extends defs.Cube{
         }
 
         this.colliding_face = face;  
+        
+        //ax+by+cz=d
+        this.a = this.normal_vec[0];
+        this.b = this.normal_vec[1];
+        this.c = this.normal_vec[2];
+        //console.log(a);
+        //console.log(b);
+        //console.log(c);
+
+
+        this.d = this.a * this.colliding_face[0][0] + this.b * this.colliding_face[0][1] + this.c * this.colliding_face[0][2];
+        //console.log(d);
+
     }
 
+    check_collision(point) {
+        let triangle1 = [[this.colliding_face[0][0], this.colliding_face[0][2]], [this.colliding_face[1][0], this.colliding_face[1][2]], [this.colliding_face[2][0], this.colliding_face[2][2]]];
 
+        let triangle2 = [[this.colliding_face[3][0], this.colliding_face[3][2]], [this.colliding_face[1][0], this.colliding_face[1][2]], [this.colliding_face[2][0], this.colliding_face[2][2]]];
+
+        let plane = (this.a*point[0]+this.b*point[1]+this.c*point[2])-this.d;
+        //console.log(plane);
+        
+        if(plane >= -1 && plane <= 1){
+            plane = true;
+            //console.log("plane satisfied");
+        }
+        else{
+            plane = false;
+        }
+
+         point = [point[0], point[2]];
+
+        if (plane && (this.inside_triangle(triangle1, point) || this.inside_triangle(triangle2, point))) {
+            return true;
+        }
+        return false;
+
+    }
+
+    area(x1, y1, x2, y2, x3, y3) {
+        return Math.abs((x1*(y2-y3) + x2*(y3-y1)+ x3*(y1-y2))/2.0);
+    }
+
+    inside_triangle(triangle, point)
+    {   
+        let x = point[0];
+        let y = point[1];
+        
+        let x1 = triangle[0][0];
+        let y1 = triangle[0][1];
+
+        let x2 = triangle[1][0];
+        let y2 = triangle[1][1];
+
+        let x3 = triangle[2][0];
+        let y3 = triangle[2][1];
+
+
+        let A = this.area (x1, y1, x2, y2, x3, y3);
+        
+        let A1 = this.area (x, y, x2, y2, x3, y3);
+
+        let A2 = this.area (x1, y1, x, y, x3, y3);
+
+        let A3 = this.area (x1, y1, x2, y2, x, y);
+            
+        /* Check if sum of A1, A2 and A3 is same as A */
+        return (A == A1 + A2 + A3);
+    }
+    
+    
     move(translation, rotation, scale) {
         this.location_matrix = translation.times(rotation).times(scale);
     }
@@ -305,7 +374,6 @@ export class TinyMarbles extends Simulation {
         // scene should do to its bodies every frame -- including applying forces.
         // Generate additional moving bodies if there ever aren't enough:
         
-        
         while (this.bodies.length < 4)
             this.bodies.push(new Body(this.data.random_shape(), this.random_color(this.bodies.length), vec3(1, 1, 1))
                 .emplace(Mat4.translation(...vec3(0, 15, 0).randomized(1)),
@@ -318,6 +386,12 @@ export class TinyMarbles extends Simulation {
 
         }
 
+        //COLLISION TEST LOG
+        if (this.boundaries[0].check_collision(this.bodies[0].center)){
+            console.log("colliding!");
+        }
+        
+
         for (let b of this.bodies) {
             // Gravity on Earth, where 1 unit in world space = 1 meter:
             b.linear_velocity[1] += dt * -9.8;
@@ -327,6 +401,7 @@ export class TinyMarbles extends Simulation {
             //     b.linear_velocity[1] *= -.8;
             // }
             
+
             if (Math.abs(b.center[0]) < 10 && Math.abs(b.center[2]) < 10 &&
                     b.center[1] < 5 + (b.center[0] * Math.sin(Math.PI/6)) &&
                     b.center[1] > 4 + (b.center[0] * Math.sin(Math.PI/6))) {
@@ -405,8 +480,10 @@ export class TinyMarbles extends Simulation {
         
        
         
+        
+
         for (let bound of this.boundaries) {
-            bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.blue))
+            bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.blue));
         }
         //this.shapes.platform1.draw(context, program_state, Mat4.translation(0, 3.5, 0).times(Mat4.rotation(Math.PI / 6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
         //this.shapes.ball.draw(context, program_state, Mat4.translation(-9, -1, 10), this.material.override(this.data.textures.blue));
