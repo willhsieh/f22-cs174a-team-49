@@ -128,7 +128,7 @@ export class Simulation extends Scene {
         Object.assign(this, {time_accumulator: 0, time_scale: .0016, t: 0, dt: 1 / 20, bodies: [], steps_taken: 0});
         this.colors = [0, 0, 0, 0];
         for (let i = 0; i < 4; i++){
-            this.colors[i] = Math.floor(Math.random()*16777215).toString(16);
+            this.colors[i] = Math.floor(Math.random()*(16777215- 3883845) + 3883845).toString(16);
         }
     }
 
@@ -162,7 +162,7 @@ export class Simulation extends Scene {
     }
 
     set_colors(marble) {
-        this.colors[marble] = Math.floor(Math.random()*16777215).toString(16);
+        this.colors[marble] = Math.floor(Math.random()*(16777215- 3883845) + 3883845).toString(16);
     }
 
     make_control_panel() {
@@ -228,12 +228,16 @@ export class Test_Data {
             blue: new Texture("assets/blue.png"),
             marble: new Texture("assets/marble.png"),
             marble2: new Texture("assets/marble2.jpg"),
+            ground: new Texture("assets/ground.jpg", "LINEAR_MIPMAP_LINEAR"),
+            platform: new Texture("assets/platform.png"),
+            background: new Texture("assets/background.png"),
+
         }
         this.shapes = {
             // donut: new defs.Torus(15, 15, [[0, 2], [0, 1]]),
             // cone: new defs.Closed_Cone(4, 10, [[0, 2], [0, 1]]),
             // capped: new defs.Capped_Cylinder(4, 12, [[0, 2], [0, 1]]),
-            ball: new defs.Subdivision_Sphere(3),
+            ball: new defs.Subdivision_Sphere(5),
             // cube: new defs.Cube(),
             // prism: new (defs.Capped_Cylinder.prototype.make_flat_shaded_version())(10, 10, [[0, 2], [0, 1]]),
             // gem: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
@@ -260,7 +264,8 @@ export class TinyMarbles extends Simulation {
         const shader = new defs.Fake_Bump_Map(1);
         this.material = new Material(shader, {
             color: color(0, 0, 0, 1),
-            ambient: .5, diffusivity: 1, texture: this.data.textures.marble2
+            ambient: .5, diffusivity: 1, specularity: 0.7, 
+            texture: this.data.textures.marble2
         })
         //this.shapes.platform1 = new defs.Cube();
         // array of matrices representing the camera for each marble attachment
@@ -275,7 +280,7 @@ export class TinyMarbles extends Simulation {
         this.boundaries.push(platform2);
 
         // TODO: more platforms here        
-     
+
         console.log(this.boundaries);
     }
 
@@ -411,12 +416,13 @@ export class TinyMarbles extends Simulation {
         program_state.lights = [new Light(vec4(0, -5, -10, 1), color(1, 1, 1, 1), 100000)];
         // Draw the ground:
         this.shapes.square.draw(context, program_state, Mat4.translation(0, -10, 0)
-            .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(50, 50, 1)), this.material.override(this.data.textures.green));
+            .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(50, 50, 1)), this.material.override(this.data.textures.ground));
         
-       
+        this.shapes.square.draw(context, program_state, Mat4.translation(0, -22, -40)
+            .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(70, 70, 1)), this.material.override({specularity:0, texture:this.data.textures.background}));
         
         for (let bound of this.boundaries) {
-            bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.blue))
+            bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.platform))
         }
         //this.shapes.platform1.draw(context, program_state, Mat4.translation(0, 3.5, 0).times(Mat4.rotation(Math.PI / 6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
         //this.shapes.ball.draw(context, program_state, Mat4.translation(-9, -1, 10), this.material.override(this.data.textures.blue));
