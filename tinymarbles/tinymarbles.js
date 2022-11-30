@@ -5,6 +5,7 @@ const {Vector, vec3, unsafe3, vec4, hex_color, color, Mat4, Light, Shape, Materi
 
 //audio
 var audio = new Audio('assets/audio.mp3');
+audio.volume = 0.08;
 audio.play();
 
 export class Boundary extends defs.Cube{
@@ -423,7 +424,7 @@ export class TinyMarbles extends Simulation {
             .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(50, 50, 1)), this.material.override(this.data.textures.ground));
         
         this.shapes.square.draw(context, program_state, Mat4.translation(0, -30, -40)
-            .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(90, 90, 1)), this.material.override({ambient:0.8, specularity:0, texture:this.data.textures.background}));
+            .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(90, 90, 1)), this.material.override({ambient:0.9, specularity:0, texture:this.data.textures.background}));
         
         for (let bound of this.boundaries) {
             bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.platform))
