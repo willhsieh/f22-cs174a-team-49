@@ -3,6 +3,10 @@ import {defs, tiny} from './examples/common.js';
 // Pull these names into this module's scope for convenience:
 const {Vector, vec3, unsafe3, vec4, hex_color, color, Mat4, Light, Shape, Material, Shader, Texture, Scene} = tiny;
 
+//audio
+var audio = new Audio('assets/audio.mp3');
+audio.play();
+
 export class Boundary extends defs.Cube{
     constructor(translation, rotation, scale){
         super();
@@ -418,8 +422,8 @@ export class TinyMarbles extends Simulation {
         this.shapes.square.draw(context, program_state, Mat4.translation(0, -10, 0)
             .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(50, 50, 1)), this.material.override(this.data.textures.ground));
         
-        this.shapes.square.draw(context, program_state, Mat4.translation(0, -22, -40)
-            .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(70, 70, 1)), this.material.override({specularity:0, texture:this.data.textures.background}));
+        this.shapes.square.draw(context, program_state, Mat4.translation(0, -30, -40)
+            .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(90, 90, 1)), this.material.override({ambient:0.8, specularity:0, texture:this.data.textures.background}));
         
         for (let bound of this.boundaries) {
             bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.platform))
