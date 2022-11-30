@@ -8,6 +8,10 @@ var audio = new Audio('assets/audio.mp3');
 audio.volume = 0.08;
 audio.play();
 
+function toggle_music(){
+    return audio.paused ? audio.play() : audio.pause();
+};
+
 export class Boundary extends defs.Cube{
     constructor(translation, rotation, scale){
         super();
@@ -181,6 +185,7 @@ export class Simulation extends Scene {
 
         this.key_triggered_button("Speed up time", ["Shift", "T"], () => this.time_scale *= 5);
         this.key_triggered_button("Slow down time", ["t"], () => this.time_scale /= 5);
+        this.key_triggered_button("Pause/Play music", ["p"], () => toggle_music());
         // this.new_line();
         // this.live_string(box => {
         //     box.textContent = "Time scale: " + this.time_scale
