@@ -317,12 +317,15 @@ export class Simulation extends Scene {
             "p3": new Shape_From_File("assets/text/p3_text.obj"),
             "p4": new Shape_From_File("assets/text/p4_text.obj"),
             "teapot": new Shape_From_File("assets/teapot.obj"),
+            "start": new Shape_From_File("assets/text/start_text.obj"),
+            "goal": new Shape_From_File("assets/text/goal_text.obj")
         };
         
         this.popstar = new Material(new defs.Fake_Bump_Map(1), {
-            color: color(.5, .5, .5, 1),
+            color: color(0.4, 0.4, 0.4, 1),
             ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("assets/stars.png")
         });
+        
 
     }
 
@@ -473,6 +476,16 @@ export class TinyMarbles extends Simulation {
             color: color(0, 0, 0, 1),
             ambient: .5, diffusivity: 1, specularity: 0.7, 
             texture: this.data.textures.kirby
+        })
+        this.start = new Material(new defs.Textured_Phong(1), {
+            color: hex_color("#000000"),
+            ambient: 1, 
+            texture: new Texture("assets/red.png")
+        })
+        this.goal = new Material(new defs.Textured_Phong(1), {
+            color: hex_color("#000000"),
+            ambient: 1, 
+            texture: new Texture("assets/blue.png")
         })
         //this.shapes.platform1 = new defs.Cube();
         // array of matrices representing the camera for each marble attachment
@@ -701,7 +714,15 @@ export class TinyMarbles extends Simulation {
         //this.shapes.platform1.draw(context, program_state, Mat4.translation(0, 3.5, 0).times(Mat4.rotation(Math.PI / 6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
         //this.shapes.ball.draw(context, program_state, Mat4.translation(-9, -1, 10), this.material.override(this.data.textures.blue));
         //this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
-        
+        let model_transform = Mat4.identity().times(Mat4.translation(10, 110, 0))
+            .times(Mat4.rotation(Math.PI / 2, 1, 0, 0))
+            .times(Mat4.scale(3, 3, 3));
+        this.imported_obj.start.draw(context, program_state, model_transform, this.start);
+        model_transform = Mat4.identity().times(Mat4.translation(0, 0, 0))
+            .times(Mat4.rotation(Math.PI / 2, 1, 0, 0))
+            .times(Mat4.scale(3, 3, 3));
+        this.imported_obj.goal.draw(context, program_state, model_transform, this.goal);
+
     }
 
     show_explanation(document_element) {
