@@ -311,12 +311,13 @@ export class Simulation extends Scene {
         for (let i = 0; i < 4; i++){
             this.colors[i] = Math.floor(Math.random()*(16777215- 3883845) + 3883845).toString(16);
         }
+
+        // all obj files will be imported here
         this.imported_obj = {
             "p1": new Shape_From_File("assets/text/p1_text.obj"),
             "p2": new Shape_From_File("assets/text/p2_text.obj"),
             "p3": new Shape_From_File("assets/text/p3_text.obj"),
             "p4": new Shape_From_File("assets/text/p4_text.obj"),
-            "teapot": new Shape_From_File("assets/teapot.obj"),
             "start": new Shape_From_File("assets/text/start_text.obj"),
             "goal": new Shape_From_File("assets/text/goal_text.obj")
         };
@@ -477,6 +478,8 @@ export class TinyMarbles extends Simulation {
             ambient: .5, diffusivity: 1, specularity: 0.7, 
             texture: this.data.textures.kirby
         })
+
+        // materials for start and goal texts
         this.start = new Material(new defs.Textured_Phong(1), {
             color: hex_color("#000000"),
             ambient: 1, 
@@ -487,6 +490,7 @@ export class TinyMarbles extends Simulation {
             ambient: 1, 
             texture: new Texture("assets/blue.png")
         })
+
         //this.shapes.platform1 = new defs.Cube();
         // array of matrices representing the camera for each marble attachment
         this.marbles = Array.apply(null, Array(4)).map(function () {});
@@ -684,6 +688,8 @@ export class TinyMarbles extends Simulation {
     display(context, program_state) {
         // display(): Draw everything else in the scene besides the moving bodies.
         super.display(context, program_state);
+
+        // camera locations, varies if the camera is attached to the marbles
         let desired = this.initial_camera_location;
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
@@ -714,6 +720,8 @@ export class TinyMarbles extends Simulation {
         //this.shapes.platform1.draw(context, program_state, Mat4.translation(0, 3.5, 0).times(Mat4.rotation(Math.PI / 6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
         //this.shapes.ball.draw(context, program_state, Mat4.translation(-9, -1, 10), this.material.override(this.data.textures.blue));
         //this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
+        
+        // draw start and goal texts
         let model_transform = Mat4.identity().times(Mat4.translation(10, 110, 0))
             .times(Mat4.rotation(Math.PI / 2, 1, 0, 0))
             .times(Mat4.scale(3, 3, 3));
