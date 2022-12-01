@@ -1,7 +1,7 @@
 import {defs, tiny} from './examples/common.js';
 
 // Pull these names into this module's scope for convenience:
-const {Vector, vec3, unsafe3, vec4, hex_color, color, Mat4, Light, Shape, Material, Shader, Texture, Scene} = tiny;
+const {Vector, vec, vec3, unsafe3, vec4, hex_color, color, Mat4, Light, Shape, Material, Shader, Texture, Scene} = tiny;
 
 //audio
 var audio = new Audio('assets/audio.mp3');
@@ -311,6 +311,19 @@ export class Simulation extends Scene {
         for (let i = 0; i < 4; i++){
             this.colors[i] = Math.floor(Math.random()*(16777215- 3883845) + 3883845).toString(16);
         }
+        this.imported_obj = {
+            "p1": new Shape_From_File("assets/text/p1_text.obj"),
+            "p2": new Shape_From_File("assets/text/p2_text.obj"),
+            "p3": new Shape_From_File("assets/text/p3_text.obj"),
+            "p4": new Shape_From_File("assets/text/p4_text.obj"),
+            "teapot": new Shape_From_File("assets/teapot.obj"),
+        };
+        
+        this.popstar = new Material(new defs.Fake_Bump_Map(1), {
+            color: color(.5, .5, .5, 1),
+            ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("assets/stars.png")
+        });
+
     }
 
     simulate(frame_time) {
@@ -382,7 +395,16 @@ export class Simulation extends Scene {
         for (let b of this.bodies){
             b.shape.draw(context, program_state, b.drawn_location, b.material.override({color:hex_color(this.colors[i])}));
             //this.shapes.platform1.draw(context, program_state, Mat4.translation(-20, -5.5, 0).times(Mat4.rotation(Math.PI / -6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
-
+            let center_matrix = Mat4.translation(b.center[0], b.center[1] + 3, b.center[2])
+                .times(Mat4.rotation((Math.PI) / 2, 1, 0, 0));
+            if(i == 0)
+                this.imported_obj.p1.draw(context, program_state, center_matrix, this.popstar);
+            if(i == 1)
+                this.imported_obj.p2.draw(context, program_state, center_matrix, this.popstar);
+            if(i == 2)
+                this.imported_obj.p3.draw(context, program_state, center_matrix, this.popstar);
+            if(i == 3)
+                this.imported_obj.p4.draw(context, program_state, center_matrix, this.popstar);
             i = i + 1;
         }
 
@@ -427,6 +449,7 @@ export class Test_Data {
             // gem: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
             // donut2: new (defs.Torus.prototype.make_flat_shaded_version())(20, 20, [[0, 2], [0, 1]]),
         };
+
     }
 
     random_shape(shape_list = this.shapes) {
@@ -670,7 +693,6 @@ export class TinyMarbles extends Simulation {
         
         this.shapes.square.draw(context, program_state, Mat4.translation(0, 57, -20)
             .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(90, 90, 1)), this.material.override({ambient:0.9, specularity:0, texture:this.data.textures.background}));
-        
         
 
         for (let bound of this.boundaries) {
