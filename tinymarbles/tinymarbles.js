@@ -449,22 +449,26 @@ export class TinyMarbles extends Simulation {
         return this.material.override(hex_color(this.colors[length]));
     }
 
-    update_velocity(b, restitution=0.8, normal) {
+    update_velocity(b, restitution=0.7, normal) {
         if (normal[0] < 0) {
             if (b.linear_velocity[0] > 0) {
                 b.linear_velocity[0] = 0;
             }
-            b.linear_velocity[1] *= normal[1] * 2 * -restitution;
+            if (b.linear_velocity[1] < 0) {
+                b.linear_velocity[1] *= normal[1] * 2 * -restitution;
+            }
             b.linear_velocity[0] += b.linear_velocity[1] * normal[0] * 2;
         }
         else if (normal[0] > 0) {
             if (b.linear_velocity[0] < 0) {
                 b.linear_velocity[0] = 0;
             }
-            b.linear_velocity[1] *= normal[1] * 2 * -restitution;
+            if (b.linear_velocity[1] < 0) {
+                b.linear_velocity[1] *= normal[1] * 2 * -restitution;
+            }
             b.linear_velocity[0] += b.linear_velocity[1] * normal[0] * 2;
         }
-        else {
+        else if (b.linear_velocity[1] < 0) {
             b.linear_velocity[1] *= -restitution;
         }
     }
@@ -548,7 +552,7 @@ export class TinyMarbles extends Simulation {
             program_state.set_camera(this.initial_camera_location);    // Locate the camera here (inverted matrix).
         }
         if (this.attached && this.attached() != null) {
-            desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
+            desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 10)));
         } else {
             desired = this.initial_camera_location;
         }
