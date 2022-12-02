@@ -653,7 +653,7 @@ export class TinyMarbles extends Simulation {
         
         while (this.bodies.length < 4)
             this.bodies.push(new Body(this.data.random_shape(), this.random_color(this.bodies.length), vec3(1, 1, 1))
-                .emplace(Mat4.translation(...vec3(15, 120, 0).randomized(1)).scale(0.1, 0.1, 0.1),
+                .emplace(Mat4.translation(...vec3(15, 120, 0).randomized(1)),
                     vec3(-0.5, 0, 0).randomized(0).normalized().times(3), Math.random()));
         
         // setting the matrices for the camera if it's attached to a ball
