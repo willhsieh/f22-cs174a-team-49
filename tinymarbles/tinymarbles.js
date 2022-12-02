@@ -487,25 +487,28 @@ export class TinyMarbles extends Simulation {
             texture: this.data.textures.kirby
         })
 
-        this.light = new Material(new defs.Phong_Shader(), {ambient: 0.8})
+        this.lightsOn = false
+
+
+        this.lights = Array();
 
         // materials for start and goal texts
-        this.start = new Material(new defs.Textured_Phong(1), {
+        this.start = new Material(new defs.Fake_Bump_Map(1), {
             color: hex_color("#0000ff"),
             ambient: 1, 
             texture: new Texture("assets/balloon.jpg")
         })
-        this.goal = new Material(new defs.Textured_Phong(1), {
+        this.goal = new Material(new defs.Fake_Bump_Map(1), {
             color: hex_color("#ff0000"),
             ambient: 1, 
             texture: new Texture("assets/balloon.jpg")
         })
-        this.trunk = new Material(new defs.Textured_Phong(1), {
+        this.trunk = new Material(new defs.Fake_Bump_Map(1), {
             color: hex_color("#000000"),
             ambient: 1, 
             texture: new Texture("assets/trunk.png")
         })
-        this.leaves = new Material(new defs.Textured_Phong(1), {
+        this.leaves = new Material(new defs.Fake_Bump_Map(1), {
             color: hex_color("#000000"),
             ambient: 1, 
             texture: new Texture("assets/leaves.png")
@@ -593,6 +596,9 @@ export class TinyMarbles extends Simulation {
         console.log(this.boundaries);
     }
 
+    toggle_lights(){
+        this.lightsOn = !this.lightsOn;
+    }
 
     make_control_panel() {
         this.live_string(box => {
@@ -606,6 +612,7 @@ export class TinyMarbles extends Simulation {
         this.key_triggered_button("Attach to player 3", ["Control", "3"], () => this.attached = () => this.marbles[2]);
         this.key_triggered_button("Attach to player 4", ["Control", "4"], () => this.attached = () => this.marbles[3]);
         this.new_line();
+        this.key_triggered_button("Toggle Lights", ["l"], () => this.toggle_lights());
         super.make_control_panel();
     }
 
@@ -726,7 +733,13 @@ export class TinyMarbles extends Simulation {
         program_state.set_camera(target);
 
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, 1, 500);
-        program_state.lights = [new Light(vec4(0, -5, -10, 1), color(1, 1, 1, 1), 100000)];
+        if (this.lightsOn){
+            program_state.lights = [new Light(vec4(0, 50, -10, 1), color(1, 1, 1, 1), 1000)]
+        }
+        else{
+            program_state.lights = [new Light(vec4(0, 0, -10, 1), color(1, 1, 1, 1), 1000)]
+        }
+        
         // Draw the ground:
         this.shapes.ball.draw(context, program_state, Mat4.translation(0, -52, -20)
             .times(Mat4.scale(130, 40, 1)), this.material.override({ambient:0.9, specularity:0,texture:this.data.textures.grass}));
