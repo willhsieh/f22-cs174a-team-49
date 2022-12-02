@@ -721,8 +721,8 @@ export class TinyMarbles extends Simulation {
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, 1, 500);
         program_state.lights = [new Light(vec4(0, -5, -10, 1), color(1, 1, 1, 1), 100000)];
         // Draw the ground:
-        this.shapes.ball.draw(context, program_state, Mat4.translation(0, -42, 20)
-            .times(Mat4.scale(100, 40, 1)), this.material.override({ambient:0.9, specularity:0,texture:this.data.textures.grass}));
+        this.shapes.ball.draw(context, program_state, Mat4.translation(0, -41.5, 20)
+            .times(Mat4.scale(130, 40, 1)), this.material.override({ambient:0.9, specularity:0,texture:this.data.textures.grass}));
 
         this.shapes.square.draw(context, program_state, Mat4.translation(0, 57, -20)
             .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(140, 100, 1)), this.material.override({ambient:0.8, specularity:0, texture:this.data.textures.background}));
