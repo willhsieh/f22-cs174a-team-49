@@ -591,6 +591,7 @@ export class TinyMarbles extends Simulation {
             box.textContent = "Time elapsed: " + (Math.trunc(this.t * 100 / 2 * 5/4) / 100).toFixed(2) + " seconds"
         });
         // viewing buttons
+        this.new_line();
         this.key_triggered_button("View entire course", ["Control", "0"], () => this.attached = () => null);
         this.key_triggered_button("Attach to player 1", ["Control", "1"], () => this.attached = () => this.marbles[0]);
         this.key_triggered_button("Attach to player 2", ["Control", "2"], () => this.attached = () => this.marbles[1]);
@@ -723,7 +724,7 @@ export class TinyMarbles extends Simulation {
             .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(100, 40, 1)), this.material.override({ambient:0.9, specularity:0,texture:this.data.textures.ground}));
         
         this.shapes.square.draw(context, program_state, Mat4.translation(0, 57, -20)
-            .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(90, 90, 1)), this.material.override({ambient:0.9, specularity:0, texture:this.data.textures.background}));
+            .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(140, 100, 1)), this.material.override({ambient:0.8, specularity:0, texture:this.data.textures.background}));
         
 
         for (let bound of this.boundaries) {
