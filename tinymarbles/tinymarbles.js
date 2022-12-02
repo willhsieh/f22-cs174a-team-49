@@ -522,14 +522,9 @@ export class TinyMarbles extends Simulation {
         this.boundaries = new Array();
         this.initial_camera_location = Mat4.translation(0, -50, -160);
         // this.initial_camera_location = this.marbles[0];
-        // let platform1 = new Boundary(Mat4.translation(0, 40, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(10, .5, 10));
-        // this.boundaries.push(platform1);
-        // let platform2 = new Boundary(Mat4.translation(-20, 30, 0), Mat4.rotation(Math.PI / -6, 0, 0, 1), Mat4.scale(10, .5, 10));
-        // this.boundaries.push(platform2);
-        // let platform3 = new Boundary(Mat4.translation(-5, 18, 0), Mat4.rotation(0, 0, 0, 1), Mat4.scale(5, .5, 10));
-        // this.boundaries.push(platform3);
-        // let platform4 = new Boundary(Mat4.translation(5, 23, 0), Mat4.rotation(Math.PI / 4, 0, 0, 1), Mat4.scale(5, .5, 10));
-        // this.boundaries.push(platform4);
+
+        this.winner = -1;
+        this.finished = false;
 
         // Platforms
         let p0 = new Boundary(Mat4.translation(15, 100, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(10, .5, 10));
@@ -606,6 +601,10 @@ export class TinyMarbles extends Simulation {
         this.live_string(box => {
             box.textContent = "Time elapsed: " + (Math.trunc(this.t * 100 / 2 * 5/4) / 100).toFixed(2) + " seconds"
         });
+        this.new_line();
+        this.live_string(box => {
+            box.textContent = "Winner: P" + (this.winner)
+        });
         // viewing buttons
         this.new_line();
         this.key_triggered_button("View entire course", ["Control", "0"], () => this.attached = () => null);
@@ -674,8 +673,9 @@ export class TinyMarbles extends Simulation {
                 idx += 1;
             }
         }
-
+        let win_idx = 0;
         for (let b of this.bodies) {
+            
             // Gravity on Earth, where 1 unit in world space = 1 meter:
             b.linear_velocity[1] += dt * -9.8;
 
@@ -687,9 +687,15 @@ export class TinyMarbles extends Simulation {
             */
 
             // If about to fall through floor, reverse y velocity:
-            if (b.center[1] < -8 && b.linear_velocity[1] < 0)
+            if (b.center[1] < -8 && b.linear_velocity[1] < 0) {
+                if (!this.finished) {
+                    this.winner = win_idx + 1;
+                }
+                this.finished = true;
+                console.log(this.winner);
                 b.linear_velocity[1] *= -.6;
-            
+            }
+
             // Left-right borders:
             if (Math.abs(b.center[0]) > 24) {
                 b.linear_velocity[0] *= -1;
@@ -711,6 +717,7 @@ export class TinyMarbles extends Simulation {
                 b.linear_velocity[2] = Math.random() * 2 - 1;
             }
             
+            win_idx += 1;
         }
         // this.bodies = this.bodies.filter(b => b.center.norm() < 50 && b.linear_velocity.norm() > 0);
     }
