@@ -442,12 +442,13 @@ export class Test_Data {
             kirby: new Texture("assets/kirby.png"),
             kirby2: new Texture("assets/kirby2.png"),
             ground: new Texture("assets/dreamland.webp"),
-            platform: new Texture("assets/platform.png"),
+            platform: new Texture("assets/bush.jpg"),
             background: new Texture("assets/kirbackground.jpeg"),
             grass: new Texture("assets/grass.jpg"),
             balloon: new Texture("assets/balloon.jpg"),
             kirby_body: new Texture("assets/Kirby_Body.png"),
-            kirby_eye: new Texture("assets/kirby_eye.png")
+            kirby_eye: new Texture("assets/kirby_eye.png"),
+            glass: new Texture("assets/glass.jpg"),
 
         }
         this.shapes = {
@@ -734,8 +735,12 @@ export class TinyMarbles extends Simulation {
             .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(140, 100, 1)), this.material.override({ambient:0.8, specularity:0, texture:this.data.textures.background}));
         
 
-        for (let bound of this.boundaries) {
-            bound.draw(context, program_state, bound.location_matrix, this.material.override(this.data.textures.platform));
+        for (let i = 0; i < this.boundaries.length; i++) {
+            let bound = this.boundaries[i]
+            if (i == 5|| i == 4||i > 8 && i < 15){
+                bound.draw(context, program_state, bound.location_matrix, this.material.override({ambient: 0.8,texture: this.data.textures.glass}));
+            }
+            bound.draw(context, program_state, bound.location_matrix, this.material.override({color: hex_color("4CBB17"),texture: this.data.textures.platform}));
         }
         //this.shapes.platform1.draw(context, program_state, Mat4.translation(0, 3.5, 0).times(Mat4.rotation(Math.PI / 6, 0, 0, 1)).times(Mat4.scale(10, .5, 10)), this.material.override(this.data.textures.blue));
         //this.shapes.ball.draw(context, program_state, Mat4.translation(-9, -1, 10), this.material.override(this.data.textures.blue));
