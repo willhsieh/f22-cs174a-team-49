@@ -319,7 +319,9 @@ export class Simulation extends Scene {
             "p3": new Shape_From_File("assets/text/p3_text.obj"),
             "p4": new Shape_From_File("assets/text/p4_text.obj"),
             "start": new Shape_From_File("assets/text/start_text.obj"),
-            "goal": new Shape_From_File("assets/text/goal_text.obj")
+            "goal": new Shape_From_File("assets/text/goal_text.obj"),
+            "tree_trunk": new Shape_From_File("assets/objects/tree_trunk.obj"),
+            "tree_leaves": new Shape_From_File("assets/objects/tree_leaves.obj")
         };
         
         this.popstar = new Material(new defs.Fake_Bump_Map(1), {
@@ -438,9 +440,9 @@ export class Test_Data {
             marble2: new Texture("assets/marble2.jpg"),
             kirby: new Texture("assets/kirby.png"),
             kirby2: new Texture("assets/kirby2.png"),
-            ground: new Texture("assets/ground.jpg", "LINEAR_MIPMAP_LINEAR"),
+            ground: new Texture("assets/dreamland.webp"),
             platform: new Texture("assets/platform.png"),
-            background: new Texture("assets/background.png"),
+            background: new Texture("assets/kirbackground.jpeg"),
 
         }
         this.shapes = {
@@ -490,12 +492,22 @@ export class TinyMarbles extends Simulation {
             ambient: 1, 
             texture: new Texture("assets/blue.png")
         })
+        this.trunk = new Material(new defs.Textured_Phong(1), {
+            color: hex_color("#000000"),
+            ambient: 1, 
+            texture: new Texture("assets/trunk.png")
+        })
+        this.leaves = new Material(new defs.Textured_Phong(1), {
+            color: hex_color("#000000"),
+            ambient: 1, 
+            texture: new Texture("assets/leaves.png")
+        })
 
         //this.shapes.platform1 = new defs.Cube();
         // array of matrices representing the camera for each marble attachment
         this.marbles = Array.apply(null, Array(4)).map(function () {});
         this.boundaries = new Array();
-        this.initial_camera_location = Mat4.translation(0, -50, -200);
+        this.initial_camera_location = Mat4.translation(0, -50, -160);
         // this.initial_camera_location = this.marbles[0];
         // let platform1 = new Boundary(Mat4.translation(0, 40, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(10, .5, 10));
         // this.boundaries.push(platform1);
@@ -707,8 +719,8 @@ export class TinyMarbles extends Simulation {
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, 1, 500);
         program_state.lights = [new Light(vec4(0, -5, -10, 1), color(1, 1, 1, 1), 100000)];
         // Draw the ground:
-        this.shapes.square.draw(context, program_state, Mat4.translation(0, -10, 0)
-            .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(50, 50, 1)), this.material.override(this.data.textures.ground));
+        this.shapes.square.draw(context, program_state, Mat4.translation(0, -10, 20)
+            .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)).times(Mat4.scale(100, 40, 1)), this.material.override({ambient:0.9, specularity:0,texture:this.data.textures.ground}));
         
         this.shapes.square.draw(context, program_state, Mat4.translation(0, 57, -20)
             .times(Mat4.rotation(0, Math.PI/2, 0, 0)).times(Mat4.scale(90, 90, 1)), this.material.override({ambient:0.9, specularity:0, texture:this.data.textures.background}));
@@ -726,6 +738,10 @@ export class TinyMarbles extends Simulation {
             .times(Mat4.rotation(Math.PI / 2, 1, 0, 0))
             .times(Mat4.scale(3, 3, 3));
         this.imported_obj.start.draw(context, program_state, model_transform, this.start);
+        model_transform = Mat4.identity().times(Mat4.translation(-40, 0, 0)).times(Mat4.scale(5,5,5));
+        this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
+        model_transform = Mat4.identity().times(Mat4.translation(-40, 3, 0)).times(Mat4.scale(5,5,5));
+        this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
         model_transform = Mat4.identity().times(Mat4.translation(0, 0, 0))
             .times(Mat4.rotation(Math.PI / 2, 1, 0, 0))
             .times(Mat4.scale(3, 3, 3));
