@@ -742,29 +742,29 @@ export class TinyMarbles extends Simulation {
         this.imported_obj.start.draw(context, program_state, model_transform, this.start);
         
         // trees
-        model_transform = Mat4.identity().times(Mat4.translation(-50, -6, 0)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 12, 0, 1, 0));
-        this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
         model_transform = Mat4.identity().times(Mat4.translation(-50, -3, 0)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 12, 0, 1, 0));
+        this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
+        model_transform = Mat4.identity().times(Mat4.translation(-50, 0, 0)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 12, 0, 1, 0));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
         
-        model_transform = Mat4.identity().times(Mat4.translation(-35, 0, 10)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 4, 0, 1, 0));
+        model_transform = Mat4.identity().times(Mat4.translation(-35, 2, 10)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 4, 0, 1, 0));
         this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
-        model_transform = Mat4.identity().times(Mat4.translation(-35, 3, 10)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 4, 0, 1, 0));
+        model_transform = Mat4.identity().times(Mat4.translation(-35, 5, 10)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 4, 0, 1, 0));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
 
-        model_transform = Mat4.identity().times(Mat4.translation(-70, -6, 15)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 32, 0, 1, 0));
-        this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
         model_transform = Mat4.identity().times(Mat4.translation(-70, -3, 15)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 32, 0, 1, 0));
+        this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
+        model_transform = Mat4.identity().times(Mat4.translation(-70, 0, 15)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 32, 0, 1, 0));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
 
-        model_transform = Mat4.identity().times(Mat4.translation(40, -7, -5)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 16, 0, 1, 0));
-        this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
         model_transform = Mat4.identity().times(Mat4.translation(40, -4, -5)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 16, 0, 1, 0));
+        this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
+        model_transform = Mat4.identity().times(Mat4.translation(40, -1, -5)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 16, 0, 1, 0));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
 
-        model_transform = Mat4.identity().times(Mat4.translation(65, -5, 10)).times(Mat4.scale(5,5,5));
+        model_transform = Mat4.identity().times(Mat4.translation(65, -3, 10)).times(Mat4.scale(5,5,5));
         this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
-        model_transform = Mat4.identity().times(Mat4.translation(65, -2, 10)).times(Mat4.scale(5,5,5));
+        model_transform = Mat4.identity().times(Mat4.translation(65, 0, 10)).times(Mat4.scale(5,5,5));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
 
         model_transform = Mat4.identity().times(Mat4.translation(80, -9, 0)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 4, 0, 1, 0));
