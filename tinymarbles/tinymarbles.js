@@ -321,7 +321,8 @@ export class Simulation extends Scene {
             "start": new Shape_From_File("assets/text/start_text.obj"),
             "goal": new Shape_From_File("assets/text/goal_text.obj"),
             "tree_trunk": new Shape_From_File("assets/objects/tree_trunk.obj"),
-            "tree_leaves": new Shape_From_File("assets/objects/tree_leaves.obj")
+            "tree_leaves": new Shape_From_File("assets/objects/tree_leaves.obj"),
+            "kirby": new Shape_From_File("assets/objects/kirby.obj")
         };
         
         this.popstar = new Material(new defs.Fake_Bump_Map(1), {
@@ -444,7 +445,9 @@ export class Test_Data {
             platform: new Texture("assets/platform.png"),
             background: new Texture("assets/kirbackground.jpeg"),
             grass: new Texture("assets/grass.jpg"),
-            balloon: new Texture("assets/balloon.jpg")
+            balloon: new Texture("assets/balloon.jpg"),
+            kirby_body: new Texture("assets/Kirby_Body.png"),
+            kirby_eye: new Texture("assets/kirby_eye.png")
 
         }
         this.shapes = {
@@ -482,6 +485,8 @@ export class TinyMarbles extends Simulation {
             ambient: .5, diffusivity: 1, specularity: 0.7, 
             texture: this.data.textures.kirby
         })
+
+        this.light = new Material(new defs.Phong_Shader(), {ambient: 0.8})
 
         // materials for start and goal texts
         this.start = new Material(new defs.Textured_Phong(1), {
@@ -722,7 +727,7 @@ export class TinyMarbles extends Simulation {
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, 1, 500);
         program_state.lights = [new Light(vec4(0, -5, -10, 1), color(1, 1, 1, 1), 100000)];
         // Draw the ground:
-        this.shapes.ball.draw(context, program_state, Mat4.translation(0, -41.5, 20)
+        this.shapes.ball.draw(context, program_state, Mat4.translation(0, -52, -20)
             .times(Mat4.scale(130, 40, 1)), this.material.override({ambient:0.9, specularity:0,texture:this.data.textures.grass}));
 
         this.shapes.square.draw(context, program_state, Mat4.translation(0, 57, -20)
