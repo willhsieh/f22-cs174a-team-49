@@ -322,7 +322,8 @@ export class Simulation extends Scene {
             "goal": new Shape_From_File("assets/text/goal_text.obj"),
             "tree_trunk": new Shape_From_File("assets/objects/tree_trunk.obj"),
             "tree_leaves": new Shape_From_File("assets/objects/tree_leaves.obj"),
-            "kirby": new Shape_From_File("assets/objects/kirby.obj")
+            "kirby": new Shape_From_File("assets/objects/kirby.obj"),
+            "bush": new Shape_From_File("assets/objects/bush.obj"),
         };
         
         this.popstar = new Material(new defs.Fake_Bump_Map(1), {
@@ -450,7 +451,6 @@ export class Test_Data {
             kirby_eye: new Texture("assets/kirby_eye.png"),
             glass: new Texture("assets/glass.jpg"),
             light: new Texture("assets/light.png"),
-
         }
         this.shapes = {
             // donut: new defs.Torus(15, 15, [[0, 2], [0, 1]]),
@@ -514,6 +514,11 @@ export class TinyMarbles extends Simulation {
             color: hex_color("#000000"),
             ambient: 1, 
             texture: new Texture("assets/leaves.png")
+        })
+        this.bush = new Material(new defs.Textured_Phong(1), {
+            color: hex_color("#000000"),
+            ambient: 0.85, diffusivity: 1, specularity: 1,
+            texture: new Texture("assets/vector_bush.jpg")
         })
 
         //this.shapes.platform1 = new defs.Cube();
@@ -769,36 +774,64 @@ export class TinyMarbles extends Simulation {
             .times(Mat4.scale(3, 3, 3));
         this.imported_obj.start.draw(context, program_state, model_transform, this.start);
         
-        // trees
+        // trees and bushes
+        
+        // tree 1
         model_transform = Mat4.identity().times(Mat4.translation(-50, -3, 0)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 12, 0, 1, 0));
         this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
         model_transform = Mat4.identity().times(Mat4.translation(-50, 0, 0)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 12, 0, 1, 0));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
         
+        // tree 2
         model_transform = Mat4.identity().times(Mat4.translation(-35, 2, 10)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 4, 0, 1, 0));
         this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
         model_transform = Mat4.identity().times(Mat4.translation(-35, 5, 10)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 4, 0, 1, 0));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
 
+        // tree 3
         model_transform = Mat4.identity().times(Mat4.translation(-70, -3, 15)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 32, 0, 1, 0));
         this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
         model_transform = Mat4.identity().times(Mat4.translation(-70, 0, 15)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 32, 0, 1, 0));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
 
+        // tree 4
         model_transform = Mat4.identity().times(Mat4.translation(40, -4, -5)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 16, 0, 1, 0));
         this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
         model_transform = Mat4.identity().times(Mat4.translation(40, -1, -5)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 16, 0, 1, 0));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
 
+        // tree 5
         model_transform = Mat4.identity().times(Mat4.translation(65, -3, 10)).times(Mat4.scale(5,5,5));
         this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
         model_transform = Mat4.identity().times(Mat4.translation(65, 0, 10)).times(Mat4.scale(5,5,5));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
 
+        // tree 6
         model_transform = Mat4.identity().times(Mat4.translation(80, -9, 0)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 4, 0, 1, 0));
         this.imported_obj.tree_trunk.draw(context, program_state, model_transform, this.trunk);
         model_transform = Mat4.identity().times(Mat4.translation(80, -6, 0)).times(Mat4.scale(5,5,5)).times(Mat4.rotation(Math.PI / 4, 0, 1, 0));
         this.imported_obj.tree_leaves.draw(context, program_state, model_transform, this.leaves);
+
+        // bush 1
+        model_transform = Mat4.identity().times(Mat4.translation(30, -15, 0)).times(Mat4.scale(4,4,4)).times(Mat4.rotation(Math.PI / 4, 0, 0, 1));
+        this.imported_obj.bush.draw(context, program_state, model_transform, this.bush);
+
+        // bush 2
+        model_transform = Mat4.identity().times(Mat4.translation(51, -20, -15)).times(Mat4.scale(4,4,4)).times(Mat4.rotation(Math.PI / 4, 0, 0, 1));
+        this.imported_obj.bush.draw(context, program_state, model_transform, this.bush);
+
+        // bush 3
+        model_transform = Mat4.identity().times(Mat4.translation(65, -20, -10)).times(Mat4.scale(4,4,4)).times(Mat4.rotation(Math.PI / 4, 0, 1, 1));
+        this.imported_obj.bush.draw(context, program_state, model_transform, this.bush);
+
+        // bush 4
+        model_transform = Mat4.identity().times(Mat4.translation(-60, -15, 0)).times(Mat4.scale(4,4,4)).times(Mat4.rotation(Math.PI / 4, 1, 0, 0));
+        this.imported_obj.bush.draw(context, program_state, model_transform, this.bush);
+
+        // bush 5
+        model_transform = Mat4.identity().times(Mat4.translation(-30, -20, -10)).times(Mat4.scale(4,4,4)).times(Mat4.rotation(Math.PI / 4, 0, 0, 1));
+        this.imported_obj.bush.draw(context, program_state, model_transform, this.bush);
+
 
         model_transform = Mat4.identity().times(Mat4.translation(0, 0, 0))
             .times(Mat4.rotation(Math.PI / 2, 1, 0, 0))
