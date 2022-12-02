@@ -571,10 +571,13 @@ export class TinyMarbles extends Simulation {
         let p14 = new Boundary(Mat4.translation(-15, 35, 0), Mat4.rotation(-Math.PI / 6, 0, 0, 1), Mat4.scale(7, .5, 10));
         this.boundaries.push(p14);
 
+        let p16 = new Boundary(Mat4.translation(20, 22, 0), Mat4.rotation(0, 0, 0, 1), Mat4.scale(2, .5, 10));
+        this.boundaries.push(p16);
+
         let p17 = new Boundary(Mat4.translation(15, 25, 0), Mat4.rotation(-Math.PI / 4, 0, 0, 1), Mat4.scale(5, .5, 10));
         this.boundaries.push(p17);
 
-        let p18 = new Boundary(Mat4.translation(25, 28, 0), Mat4.rotation(Math.PI / 4, 0, 0, 1), Mat4.scale(10, .5, 10));
+        let p18 = new Boundary(Mat4.translation(29, 29, 0), Mat4.rotation(Math.PI / 4, 0, 0, 1), Mat4.scale(10, .5, 10));
         this.boundaries.push(p18);
 
         let p19 = new Boundary(Mat4.translation(-5, 25, 0), Mat4.rotation(Math.PI / 6, 0, 0, 1), Mat4.scale(5, .5, 10));
@@ -674,6 +677,14 @@ export class TinyMarbles extends Simulation {
             for (let p of this.boundaries) {
                 if (p.check_collision(b.center)) {
                     // console.log(idx);
+                    if (idx == 13) {
+                        b.center[0] = 15;
+                        b.center[1] = 120;
+                        b.center[2] = 0;
+                        b.linear_velocity[0] = Math.random() - 0.5;
+                        b.linear_velocity[1] = 0;
+                        b.linear_velocity[2] = Math.random() * 2 - 1;
+                    }
                     this.update_velocity(b, 0.8, p.normal_vec);
                 }
                 idx += 1;
@@ -703,7 +714,7 @@ export class TinyMarbles extends Simulation {
             }
 
             // Left-right borders:
-            if (Math.abs(b.center[0]) > 24) {
+            if (b.center[0] < -24 || b.center[0] > 30) {
                 b.linear_velocity[0] *= -1;
             }
 
@@ -767,7 +778,7 @@ export class TinyMarbles extends Simulation {
 
         for (let i = 0; i < this.boundaries.length; i++) {
             let bound = this.boundaries[i]
-            if (i == 5|| i == 4||i > 8 && i < 15){
+            if (i == 5|| i == 4||i > 8 && i < 16){
                 bound.draw(context, program_state, bound.location_matrix, this.material.override({ambient: 0.8,texture: this.data.textures.glass}));
             }
             bound.draw(context, program_state, bound.location_matrix, this.material.override({color: hex_color("4CBB17"),texture: this.data.textures.platform}));
