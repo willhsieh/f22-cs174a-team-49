@@ -449,6 +449,7 @@ export class Test_Data {
             kirby_body: new Texture("assets/Kirby_Body.png"),
             kirby_eye: new Texture("assets/kirby_eye.png"),
             glass: new Texture("assets/glass.jpg"),
+            light: new Texture("assets/light.png"),
 
         }
         this.shapes = {
@@ -480,6 +481,7 @@ export class TinyMarbles extends Simulation {
         this.data = new Test_Data();
         this.shapes = Object.assign({}, this.data.shapes);
         this.shapes.square = new defs.Square();
+        this.shapes.cube = new defs.Cube();
         const shader = new defs.Fake_Bump_Map(1);
         this.material = new Material(shader, {
             color: color(0, 0, 0, 1),
@@ -503,12 +505,12 @@ export class TinyMarbles extends Simulation {
             ambient: 1, 
             texture: new Texture("assets/balloon.jpg")
         })
-        this.trunk = new Material(new defs.Fake_Bump_Map(1), {
+        this.trunk = new Material(new defs.Textured_Phong(1), {
             color: hex_color("#000000"),
             ambient: 1, 
             texture: new Texture("assets/trunk.png")
         })
-        this.leaves = new Material(new defs.Fake_Bump_Map(1), {
+        this.leaves = new Material(new defs.Textured_Phong(1), {
             color: hex_color("#000000"),
             ambient: 1, 
             texture: new Texture("assets/leaves.png")
@@ -719,11 +721,11 @@ export class TinyMarbles extends Simulation {
 
         // camera locations, varies if the camera is attached to the marbles
         let desired = this.initial_camera_location;
-        if (!context.scratchpad.controls) {
-            this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
-            this.children.push(new defs.Program_State_Viewer());
-            program_state.set_camera(this.initial_camera_location);    // Locate the camera here (inverted matrix).
-        }
+        // if (!context.scratchpad.controls) {
+        //     this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
+        //     this.children.push(new defs.Program_State_Viewer());
+        //     program_state.set_camera(this.initial_camera_location);    // Locate the camera here (inverted matrix).
+        // }
         if (this.attached && this.attached() != null) {
             desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 10)));
         } else {
@@ -737,9 +739,11 @@ export class TinyMarbles extends Simulation {
             program_state.lights = [new Light(vec4(0, 50, -10, 1), color(1, 1, 1, 1), 1000)]
         }
         else{
-            program_state.lights = [new Light(vec4(0, 0, -10, 1), color(1, 1, 1, 1), 1000)]
+            program_state.lights = [new Light(vec4(50, 50, -10, 1), color(1, 1, 1, 1), 1000)]
         }
         
+        this.shapes.square.draw(context, program_state, Mat4.translation(0, 35, 0).times(Mat4.scale(2,2,1)).times(Mat4.rotation(0, Math.PI/3, 0, 0)), this.material.override({ambient:0.8, specularity:1, diffusivity:1, texture:this.data.textures.light}));
+
         // Draw the ground:
         this.shapes.ball.draw(context, program_state, Mat4.translation(0, -52, -20)
             .times(Mat4.scale(130, 40, 1)), this.material.override({ambient:0.9, specularity:0,texture:this.data.textures.grass}));
