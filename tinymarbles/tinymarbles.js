@@ -662,7 +662,8 @@ export class TinyMarbles extends Simulation {
         
         // setting the matrices for the camera if it's attached to a ball
         for (let i = 0; i < this.bodies.length; i++){
-            let center_matrix = Mat4.translation(this.bodies[i].center[0],this.bodies[i].center[1],this.bodies[i].center[2]);
+            let center_matrix = Mat4.translation(this.bodies[i].center[0],
+                this.bodies[i].center[1],this.bodies[i].center[2]);
             this.marbles[i] = center_matrix;
 
         }
