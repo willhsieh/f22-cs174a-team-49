@@ -444,6 +444,7 @@ export class Test_Data {
             platform: new Texture("assets/platform.png"),
             background: new Texture("assets/kirbackground.jpeg"),
             grass: new Texture("assets/grass.jpg"),
+            balloon: new Texture("assets/balloon.jpg")
 
         }
         this.shapes = {
@@ -484,14 +485,14 @@ export class TinyMarbles extends Simulation {
 
         // materials for start and goal texts
         this.start = new Material(new defs.Textured_Phong(1), {
-            color: hex_color("#000000"),
+            color: hex_color("#0000ff"),
             ambient: 1, 
-            texture: new Texture("assets/red.png")
+            texture: new Texture("assets/balloon.jpg")
         })
         this.goal = new Material(new defs.Textured_Phong(1), {
-            color: hex_color("#000000"),
+            color: hex_color("#ff0000"),
             ambient: 1, 
-            texture: new Texture("assets/blue.png")
+            texture: new Texture("assets/balloon.jpg")
         })
         this.trunk = new Material(new defs.Textured_Phong(1), {
             color: hex_color("#000000"),
